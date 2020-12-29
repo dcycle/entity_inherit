@@ -1,0 +1,11 @@
+---
+name: Entity Inherit Verbose
+type: module
+description: >-
+  Provides verbose information related to Entity Inherit every time a node is
+  saved.
+core: '8.x'
+core_version_requirement: ^8 || ^9
+php: '7.x'
+dependencies:
+  - entity_inherit:entity_inherit

@@ -1,0 +1,11 @@
+---
+name: Entity Inherit
+type: module
+description: >-
+  Allow entities to inherit certain fields from other entities. Fields' values
+  are updated every time an entity is saved.
+core: 8.x
+core_version_requirement: ^8 || ^9
+php: '7.x'
+dependencies:
+  - core:entity_reference

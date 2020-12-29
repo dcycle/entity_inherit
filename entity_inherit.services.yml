@@ -1,0 +1,14 @@
+---
+services:
+  entity_inherit:
+    class: Drupal\entity_inherit\EntityInherit
+    arguments:
+      - '@config.factory'
+      - '@plugin.manager.entity_inherit'
+      - '@entity_type.manager'
+      - '@messenger'
+      - '@entity_field.manager'
+      - '@state'
+  plugin.manager.entity_inherit:
+    class: Drupal\entity_inherit\EntityInheritPlugin\EntityInheritPluginManager
+    parent: default_plugin_manager

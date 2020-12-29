@@ -1,0 +1,26 @@
+<?php
+
+/**
+ * @file
+ * Runtime hooks.
+ */
+
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\entity_inherit\EntityInherit;
+
+/**
+ * Quick access to the entity_inherit service, useful for debugging.
+ *
+ * @return \Drupal\entity_inherit\EntityInherit
+ *   The EntityInherit service.
+ */
+function entity_inherit() : EntityInherit {
+  return \Drupal::service('entity_inherit');
+}
+
+/**
+ * Implements hook_entity_presave().
+ */
+function entity_inherit_entity_presave(EntityInterface $entity) {
+  entity_inherit()->hookPresave($entity);
+}
