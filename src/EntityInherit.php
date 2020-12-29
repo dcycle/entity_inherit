@@ -5,6 +5,7 @@ namespace Drupal\entity_inherit;
 use Drupal\Core\Entity\EntityFieldManager;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManager;
+use Drupal\Core\Logger\LoggerChannelFactory;
 use Drupal\Core\Logger\RfcLogLevel;
 use Drupal\Core\Messenger\Messenger;
 use Drupal\Core\State\State;
@@ -75,6 +76,13 @@ class EntityInherit {
   protected $messenger;
 
   /**
+   * The injected logger.
+   *
+   * @var \Drupal\Core\Logger\LoggerChannelFactory
+   */
+  protected $loggerFactory;
+
+  /**
    * Class constructor.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
@@ -89,14 +97,17 @@ class EntityInherit {
    *   The injected entity field manager.
    * @param \Drupal\Core\State\State $state
    *   The state service.
+   * @param \Drupal\Core\Logger\LoggerChannelFactory $loggerFactory
+   *   The logger service.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, EntityInheritPluginManager $plugin_manager, EntityTypeManager $entity_type_manager, Messenger $messenger, EntityFieldManager $entity_field_manager, State $state) {
+  public function __construct(ConfigFactoryInterface $config_factory, EntityInheritPluginManager $plugin_manager, EntityTypeManager $entity_type_manager, Messenger $messenger, EntityFieldManager $entity_field_manager, State $state, LoggerChannelFactory $loggerFactory) {
     $this->configFactory = $config_factory;
     $this->pluginManager = $plugin_manager;
     $this->entityTypeManager = $entity_type_manager;
     $this->messenger = $messenger;
     $this->entityFieldManager = $entity_field_manager;
     $this->state = $state;
+    $this->loggerFactory = $loggerFactory;
   }
 
   /**
@@ -571,7 +582,7 @@ class EntityInherit {
 
     $variables += Error::decodeException($t);
 
-    \Drupal::logger('entity_inherit')->log($severity, $message, $variables);
+    $this->loggerFactory->get('entity_inherit')->log($severity, $message, $variables);
   }
 
   /**

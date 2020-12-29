@@ -9,6 +9,7 @@ services:
       - '@messenger'
       - '@entity_field.manager'
       - '@state'
+      - '@logger.factory'
   plugin.manager.entity_inherit:
     class: Drupal\entity_inherit\EntityInheritPlugin\EntityInheritPluginManager
     parent: default_plugin_manager
