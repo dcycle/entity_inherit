@@ -150,6 +150,8 @@ abstract class EntityInheritEntityRevision implements EntityInheritEntityRevisio
    * {@inheritdoc}
    */
   public function value(string $field_name) : array {
+    dpm($field_name);
+    dpm($this->getDrupalEntity()->{$field_name}->getValue());
     return $this->getDrupalEntity()->{$field_name}->getValue();
   }
 

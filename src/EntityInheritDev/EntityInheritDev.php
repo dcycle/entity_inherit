@@ -34,17 +34,24 @@ class EntityInheritDev {
   /**
    * Make an assertion. Die on failure.
    *
-   * @param bool $assertion
-   *   An assertion.
+   * @param mixed $va1
+   *   An artibrary value which should equal $val2.
+   * @param mixed $va2
+   *   An artibrary value which should equal $val1.
    * @param string $message
    *   A message.
    */
-  public function assert(bool $assertion, string $message) {
-    if ($assertion) {
+  public function assert($val1, $val2, string $message) {
+    if ($val1 == $val2) {
       $this->print('Assertion passed: ' . $message);
     }
     else {
       $this->print('Assertion failed, dying: ' . $message);
+      $this->print('* * * * * * *');
+      $this->print($val1);
+      $this->print('* * * * * * *');
+      $this->print($val2);
+      $this->print('* * * * * * *');
       die(1);
     }
   }
@@ -57,17 +64,17 @@ class EntityInheritDev {
 
     $this->print('Unsetting parent fields.');
     $app->setParentEntityFields([]);
-    $this->assert($app->parentFieldFeedback()['severity'] == 1, 'Severity is 1 because we have no fields.');
+    $this->assert($app->parentFieldFeedback()['severity'], 1, 'Severity is 1 because we have no fields.');
     $app->setParentEntityFields(['field_bla.']);
-    $this->assert($app->parentFieldFeedback()['severity'] == 2, 'Severity is 2 because the parent field does not exist.');
+    $this->assert($app->parentFieldFeedback()['severity'], 2, 'Severity is 2 because the parent field does not exist.');
     $app->setParentEntityFields(['field_bla', 'field_parents']);
-    $this->assert($app->parentFieldFeedback()['severity'] == 2, 'Severity is 2 because one of the parent fields does not exist.');
+    $this->assert($app->parentFieldFeedback()['severity'], 2, 'Severity is 2 because one of the parent fields does not exist.');
     $app->setParentEntityFields(['field_parents']);
-    $this->assert($app->parentFieldFeedback()['severity'] == 0, 'Severity is 0 because the parent field exists.');
+    $this->assert($app->parentFieldFeedback()['severity'], 0, 'Severity is 0 because the parent field exists.');
     $first = $this->createNode('First Node', 'page');
     $second = $this->createNode('Second Node', 'page', [$first->id()]);
-    $this->assert(array_key_exists('body', $app->wrap($second)->inheritableFields()), 'The body field is inheritable.');
-    $this->assert(1 === count($app->wrap($second)->inheritableFields()), 'The body field is the only inheritable field.');
+    $this->assert(array_key_exists('body', $app->wrap($second)->inheritableFields()), TRUE, 'The body field is inheritable.');
+    $this->assert(1, count($app->wrap($second)->inheritableFields()), 'The body field is the only inheritable field.');
     $this->happyPath();
   }
 
@@ -87,7 +94,7 @@ class EntityInheritDev {
     $child = $this->createNode('New child of existing parent, empty body', 'page', [$parent->id()]);
     // See https://github.com/mglaman/phpstan-drupal/issues/159.
     // @phpstan-ignore-next-line
-    $this->assert($child->get('body')->getValue() == [
+    $this->assert($child->get('body')->getValue(), [
       [
         'value' => 'Hello',
         'summary' => '',
@@ -100,7 +107,7 @@ class EntityInheritDev {
         'format' => 'full_html',
       ],
     ]);
-    $this->assert($child2->body->getValue() == [
+    $this->assert($child2->body->getValue(), [
       [
         'value' => 'Hi',
         'summary' => '',
