@@ -59,7 +59,7 @@ class EntityInheritNewEntity extends EntityInheritEntity {
    * {@inheritdoc}
    */
   public function hasNewParents() : bool {
-    return count($this->getMergedParents()) >= 0;
+    return count($this->getMergedParents()) > 0;
   }
 
   /**
