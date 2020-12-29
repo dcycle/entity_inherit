@@ -116,10 +116,8 @@ class EntityInheritExistingEntity extends EntityInheritEntity implements EntityI
       return new EntityInheritOriginalEntity($entity->original, $this->app);
     }
     else {
-      $this->app->userErrorMessage($this->t('Could not obtain the original entity for @type @id. Using saved entity instead.', [
-        '@type' => $this->getType(),
-        '@id' => $this->id,
-      ]));
+      // We are not in the process of being saved; so there is no "original"
+      // property.
       return $this;
     }
   }

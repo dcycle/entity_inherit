@@ -68,6 +68,34 @@ class EntityInheritDev {
     $second = $this->createNode('Second Node', 'page', [$first->id()]);
     $this->assert(array_key_exists('body', $app->wrap($second)->inheritableFields()), 'The body field is inheritable.');
     $this->assert(1 === count($app->wrap($second)->inheritableFields()), 'The body field is the only inheritable field.');
+    $this->happyPath();
+  }
+
+  /**
+   * Test a use case where a new child is created for an existing parent.
+   *
+   * The body field should be inherited because it's empty in the child.
+   */
+  public function happyPath() {
+    $this->print('New child of existing parent');
+    $parent = $this->createNode('Existing parent', 'page', [], [
+      'body' => [
+        'value' => 'Hello',
+        'format' => 'full_html',
+      ],
+    ]);
+    $child = $this->createNode('New child of existing parent, empty body', 'page', [$parent->id()]);
+    $this->assert($child->body->getValue() == [
+      [
+        'value' => 'Hello',
+        'summary' => '',
+        'format' => 'full_html',
+      ],
+    ], 'Body is inherited from parent to child.');
+
+    $this->print('Parent changes; child should change as well.');
+    $parent->set('body', 'Hi');
+    $parent->save();
   }
 
   /**
@@ -79,17 +107,19 @@ class EntityInheritDev {
    *   A type.
    * @param array $parents
    *   Parent nodes.
+   * @param array $other
+   *   Other information to add to the new node.
    *
    * @return \Drupal\Core\Entity\EntityInterface
    *   A resulting entity.
    */
-  public function createNode(string $title, string $type, array $parents = []) {
+  public function createNode(string $title, string $type, array $parents = [], array $other = []) {
     $this->print('Creating node ' . $title);
     $node = Node::create([
       'type' => 'page',
       'title' => $title,
       'field_parents' => $this->formatParents($parents),
-    ]);
+    ] + $other);
     $node->save();
     return $node;
   }

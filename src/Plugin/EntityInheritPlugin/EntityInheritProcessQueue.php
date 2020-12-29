@@ -25,6 +25,7 @@ class EntityInheritProcessQueue extends EntityInheritPluginBase {
    * {@inheritdoc}
    */
   public function presave(EntityInheritUpdatableEntityInterface $entity, EntityInherit $app) {
+    print_r([__FILE__]);
     $app->getQueue()->process();
   }
 

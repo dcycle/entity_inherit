@@ -403,7 +403,9 @@ class EntityInherit {
    */
   public function hookPresave(EntityInterface $entity) {
     try {
-      $this->wrap($entity)->presave();
+      $wrapped_entity = $this->wrap($entity);
+      $wrapped_entity->presave();
+      $this->plugins()->presave($wrapped_entity, $this);
     }
     catch (\Throwable $t) {
       $this->watchdogThrowable($t);
