@@ -48,6 +48,13 @@ class EntityInheritQueue implements EntityInheritQueueInterface {
   /**
    * {@inheritdoc}
    */
+  public function items() : EntityInheritQueueableInterface {
+    return $this->items;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function process() {
     $this->app->getQueueProcessorFactory()->processor($this)->process();
   }

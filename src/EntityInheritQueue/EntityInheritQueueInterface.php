@@ -16,6 +16,14 @@ interface EntityInheritQueueInterface {
   public function add(EntityInheritQueueableInterface $items);
 
   /**
+   * Get queuable items.
+   *
+   * @return \Drupal\entity_inherit\EntityInheritQueue\EntityInheritQueueableInterface
+   *   Items.
+   */
+  public function items() : EntityInheritQueueableInterface;
+
+  /**
    * Process this queue.
    */
   public function process();

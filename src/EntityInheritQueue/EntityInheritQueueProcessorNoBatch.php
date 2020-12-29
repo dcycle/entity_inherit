@@ -11,7 +11,6 @@ class EntityInheritQueueProcessorNoBatch extends EntityInheritQueueProcessor {
    * {@inheritdoc}
    */
   public function process() {
-
   }
 
 }
