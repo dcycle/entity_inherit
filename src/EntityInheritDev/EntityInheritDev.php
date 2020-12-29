@@ -34,9 +34,9 @@ class EntityInheritDev {
   /**
    * Make an assertion. Die on failure.
    *
-   * @param mixed $va1
+   * @param mixed $val1
    *   An artibrary value which should equal $val2.
-   * @param mixed $va2
+   * @param mixed $val2
    *   An artibrary value which should equal $val1.
    * @param string $message
    *   A message.
