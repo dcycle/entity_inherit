@@ -31,6 +31,7 @@ class EntityInheritNewEntity extends EntityInheritEntity {
   public function __construct(EntityInterface $entity, EntityInherit $app) {
     $this->drupalEntity = $entity;
     $this->app = $app;
+    parent::__construct($entity->getEntityTypeId(), $app);
   }
 
   /**
@@ -46,11 +47,7 @@ class EntityInheritNewEntity extends EntityInheritEntity {
   public function getMergedParents() : EntityInheritExistingMultipleEntitiesInterface {
     $return = $this->app->getEntityFactory()->newCollection();
 
-    $fields = $this->app->getParentEntityFields()->validOnly('parent')->toArray();
-
-    foreach ($fields as $field) {
-      $return->add($this->referencedEntities($field));
-    }
+    $return->add($this->referencedEntities($this->app->getParentEntityFields()->validOnly('parent')));
 
     return $return;
   }
@@ -74,9 +71,9 @@ class EntityInheritNewEntity extends EntityInheritEntity {
    */
   public function presave() {
     foreach ($this->getMergedParents()->preload()->toArray() as $entity) {
-      foreach ($entity->getFields() as $fieldname => $value) {
+      foreach ($entity->fieldValues()->toArray() as $fieldname => $value) {
         if ($this->hasField($fieldname)) {
-          $this->drupalEntity->{$fieldname} = $value;
+          $this->drupalEntity->{$fieldname} = $value->newValue();
         }
       }
     }

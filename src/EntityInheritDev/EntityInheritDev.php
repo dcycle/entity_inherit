@@ -64,17 +64,15 @@ class EntityInheritDev {
     $this->assert($app->parentFieldFeedback()['severity'] == 2, 'Severity is 2 because one of the parent fields does not exist.');
     $app->setParentEntityFields(['field_parents']);
     $this->assert($app->parentFieldFeedback()['severity'] == 0, 'Severity is 0 because the parent field exists.');
-    $this->createNode('1', 'First Node', 'page');
-    $node2 = $this->createNode('2', 'Second Node', 'page', [1]);
-    $this->assert(array_key_exists('body', $app->wrap($node2)->inheritableFields()), 'The body field is inheritable.');
-    $this->assert(1 === count($app->wrap($node2)->inheritableFields()), 'The body field is the only inheritable field.');
+    $first = $this->createNode('First Node', 'page');
+    $second = $this->createNode('Second Node', 'page', [$first->id()]);
+    $this->assert(array_key_exists('body', $app->wrap($second)->inheritableFields()), 'The body field is inheritable.');
+    $this->assert(1 === count($app->wrap($second)->inheritableFields()), 'The body field is the only inheritable field.');
   }
 
   /**
    * Create a starter node if it does not exist.
    *
-   * @param string $id
-   *   An expected node id.
    * @param string $title
    *   A title.
    * @param string $type
@@ -85,11 +83,7 @@ class EntityInheritDev {
    * @return \Drupal\Core\Entity\EntityInterface
    *   A resulting entity.
    */
-  public function createNode(string $id, string $title, string $type, array $parents = []) {
-    if ($candidate = Node::load($id)) {
-      $this->print('Node ' . $id . ' already exists. Moving on.');
-      return $candidate;
-    }
+  public function createNode(string $title, string $type, array $parents = []) {
     $this->print('Creating node ' . $title);
     $node = Node::create([
       'type' => 'page',
