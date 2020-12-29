@@ -5,10 +5,12 @@ namespace Drupal\entity_inherit;
 use Drupal\Core\Entity\EntityFieldManager;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManager;
+use Drupal\Core\Logger\RfcLogLevel;
 use Drupal\Core\Messenger\Messenger;
 use Drupal\Core\State\State;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Utility\Error;
 use Drupal\entity_inherit\EntityInheritDev\EntityInheritDev;
 use Drupal\entity_inherit\EntityInheritEntity\EntityInheritEntityFactory;
 use Drupal\entity_inherit\EntityInheritEntity\EntityInheritEntitySingleInterface;
@@ -393,7 +395,8 @@ class EntityInherit {
       $this->wrap($entity)->presave();
     }
     catch (\Throwable $t) {
-      $this->userErrorMessage($t);
+      $this->watchdogThrowable($t);
+      $this->userErrorMessage($this->t('Entity Inherit encountered an error. See the log for details.'));
     }
   }
 
@@ -535,6 +538,40 @@ class EntityInherit {
    */
   public function validFieldName(string $field_name, string $category) : bool {
     return in_array($field_name, array_keys($this->allFields($category)));
+  }
+
+  /**
+   * Log a \Throwable to the watchdog.
+   *
+   * Modeled after Core's watchdog_exception().
+   *
+   * @param \Throwable $t
+   *   A \throwable.
+   * @param mixed $message
+   *   The message to store in the log. If empty, a text that contains all
+   *   useful information about the passed-in exception is used.
+   * @param mixed $variables
+   *   Array of variables to replace in the message on display or NULL if
+   *   message is already translated or not possible to translate.
+   * @param mixed $severity
+   *   The severity of the message, as per RFC 3164.
+   * @param mixed $link
+   *   A link to associate with the message.
+   */
+  public function watchdogThrowable(\Throwable $t, $message = NULL, $variables = [], $severity = RfcLogLevel::ERROR, $link = NULL) {
+
+    // Use a default value if $message is not set.
+    if (empty($message)) {
+      $message = '%type: @message in %function (line %line of %file).';
+    }
+
+    if ($link) {
+      $variables['link'] = $link;
+    }
+
+    $variables += Error::decodeException($t);
+
+    \Drupal::logger('entity_inherit')->log($severity, $message, $variables);
   }
 
   /**
