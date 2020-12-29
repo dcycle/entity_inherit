@@ -85,7 +85,9 @@ class EntityInheritDev {
       ],
     ]);
     $child = $this->createNode('New child of existing parent, empty body', 'page', [$parent->id()]);
-    $this->assert($child->body->getValue() == [
+    // See https://github.com/mglaman/phpstan-drupal/issues/159.
+    // @phpstan-ignore-next-line
+    $this->assert($child->get('body')->getValue() == [
       [
         'value' => 'Hello',
         'summary' => '',
@@ -94,6 +96,8 @@ class EntityInheritDev {
     ], 'Body is inherited from parent to child.');
 
     $this->print('Parent changes; child should change as well.');
+    // See https://github.com/mglaman/phpstan-drupal/issues/159.
+    // @phpstan-ignore-next-line
     $parent->set('body', 'Hi');
     $parent->save();
   }
