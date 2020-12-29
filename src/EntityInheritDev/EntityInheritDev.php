@@ -92,6 +92,19 @@ class EntityInheritDev {
         'format' => 'full_html',
       ],
     ], 'Body is inherited from parent to child.');
+    $child2 = $this->createNode('New child of existing parent, empty body', 'page', [$parent->id()], [
+      'body' => [
+        'value' => 'Hi',
+        'format' => 'full_html',
+      ],
+    ]);
+    $this->assert($child2->body->getValue() == [
+      [
+        'value' => 'Hi',
+        'summary' => '',
+        'format' => 'full_html',
+      ],
+    ], 'Body is not inherited from parent to child because child defines its own body.');
 
     $this->print('Parent changes; child should change as well.');
     $parent->set('body', 'Hi');
