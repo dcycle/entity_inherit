@@ -34,23 +34,23 @@ class EntityInheritDev {
   /**
    * Make an assertion. Die on failure.
    *
-   * @param mixed $val1
-   *   An artibrary value which should equal $val2.
-   * @param mixed $val2
-   *   An artibrary value which should equal $val1.
+   * @param mixed $actual
+   *   An artibrary value which should equal $expected.
+   * @param mixed $expected
+   *   An artibrary value which should equal $actual.
    * @param string $message
    *   A message.
    */
-  public function assert($val1, $val2, string $message) {
-    if ($val1 == $val2) {
+  public function assert($actual, $expected, string $message) {
+    if ($actual == $expected) {
       $this->print('Assertion passed: ' . $message);
     }
     else {
       $this->print('Assertion failed, dying: ' . $message);
-      $this->print('* * * * * * *');
-      $this->print($val1);
-      $this->print('* * * * * * *');
-      $this->print($val2);
+      $this->print('* * * * * * * actual ===>');
+      $this->print($actual);
+      $this->print('* * * * * * * expected ===>');
+      $this->print($expected);
       $this->print('* * * * * * *');
       die(1);
     }
