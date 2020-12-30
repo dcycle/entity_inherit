@@ -3,6 +3,7 @@
 namespace Drupal\entity_inherit\EntityInheritDev;
 
 use Drupal\node\Entity\Node;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\entity_inherit\EntityInherit;
 use Drupal\entity_inherit\Utilities\FriendTrait;
 
@@ -59,14 +60,14 @@ class EntityInheritDev {
   /**
    * Make sure a node's body value is as expected.
    *
-   * @param \Drupal\node\Entity\Node $node
+   * @param \Drupal\Core\Entity\EntityInterface $node
    *   A Drupal node.
    * @param string $value
    *   An expected value.
    * @param string $message
    *   An assertion message.
    */
-  public function assertBodyValue(Node $node, string $value, string $message) {
+  public function assertBodyValue(EntityInterface $node, string $value, string $message) {
     // See https://github.com/mglaman/phpstan-drupal/issues/159.
     // @phpstan-ignore-next-line
     $this->assert($node->get('body')->getValue(), [
