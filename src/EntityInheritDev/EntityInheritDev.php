@@ -57,6 +57,28 @@ class EntityInheritDev {
   }
 
   /**
+   * Make sure a node's body value is as expected.
+   *
+   * @param \Drupal\node\Entity\Node $node
+   *   A Drupal node.
+   * @param string $value
+   *   An expected value.
+   * @param string $message
+   *   An assertion message.
+   */
+  public function assertBodyValue(Node $node, string $value, string $message) {
+    // See https://github.com/mglaman/phpstan-drupal/issues/159.
+    // @phpstan-ignore-next-line
+    $this->assert($node->get('body')->getValue(), [
+      [
+        'value' => $value,
+        'summary' => '',
+        'format' => 'full_html',
+      ],
+    ], $message);
+  }
+
+  /**
    * Create some starter data.
    */
   public function liveTest() {
@@ -92,28 +114,14 @@ class EntityInheritDev {
       ],
     ]);
     $child = $this->createNode('New child of existing parent, empty body', 'page', [$parent->id()]);
-    // See https://github.com/mglaman/phpstan-drupal/issues/159.
-    // @phpstan-ignore-next-line
-    $this->assert($child->get('body')->getValue(), [
-      [
-        'value' => 'Hello',
-        'summary' => '',
-        'format' => 'full_html',
-      ],
-    ], 'Body is inherited from parent to child.');
+    $this->assertBodyValue($child, 'Hello', 'Body is inherited from parent to child.');
     $child2 = $this->createNode('New child of existing parent, empty body', 'page', [$parent->id()], [
       'body' => [
         'value' => 'Hi',
         'format' => 'full_html',
       ],
     ]);
-    $this->assert($child2->body->getValue(), [
-      [
-        'value' => 'Hi',
-        'summary' => '',
-        'format' => 'full_html',
-      ],
-    ], 'Body is not inherited from parent to child because child defines its own body.');
+    $this->assertBodyValue($child2, 'Hi', 'Body is not inherited from parent to child because child defines its own body.');
 
     $this->print('Parent changes; child should change as well.');
     // See https://github.com/mglaman/phpstan-drupal/issues/159.
