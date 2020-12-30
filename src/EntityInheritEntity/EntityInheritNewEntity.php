@@ -71,10 +71,8 @@ class EntityInheritNewEntity extends EntityInheritEntity {
    */
   public function presave() {
     foreach ($this->getMergedParents()->preload()->toArray() as $entity) {
-      foreach ($entity->fieldValues()->toArray() as $fieldname => $value) {
-        if ($this->hasField($fieldname)) {
-          $this->drupalEntity->{$fieldname} = $value->newValue();
-        }
+      foreach ($entity->fieldValues()->toArray() as $fieldvalue) {
+        $this->updateField($fieldvalue);
       }
     }
   }
