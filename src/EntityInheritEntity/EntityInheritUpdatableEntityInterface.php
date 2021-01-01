@@ -7,9 +7,4 @@ namespace Drupal\entity_inherit\EntityInheritEntity;
  */
 interface EntityInheritUpdatableEntityInterface {
 
-  /**
-   * Update this entity based on its parents.
-   */
-  public function update();
-
 }

@@ -39,12 +39,15 @@ abstract class EntityInheritEntityRevision implements EntityInheritEntityRevisio
    *
    * @param string $type
    *   The Drupal entity type such as "node".
+   * @param null|\Drupal\Core\Entity\EntityInterface $entity
+   *   The Drupal entity object, or NULL if we don't have it.
    * @param \Drupal\entity_inherit\EntityInherit $app
    *   The global app.
    */
-  public function __construct(string $type, EntityInherit $app) {
+  public function __construct(string $type, $entity, EntityInherit $app) {
     $this->type = $type;
     $this->app = $app;
+    $this->drupalEntity = $entity;
   }
 
   /**
@@ -139,7 +142,7 @@ abstract class EntityInheritEntityRevision implements EntityInheritEntityRevisio
     foreach ($fields->toArray() as $field) {
       $drupal_entities = $this->getDrupalEntity()->{$field->__toString()}->referencedEntities();
       foreach ($drupal_entities as $drupal_entity) {
-        $return->add(new EntityInheritExistingEntity($drupal_entity->getEntityTypeId(), $drupal_entity->id(), $this->app));
+        $return->add(new EntityInheritExistingEntity($drupal_entity->getEntityTypeId(), $drupal_entity->id(), $drupal_entity, $this->app));
       }
     }
 

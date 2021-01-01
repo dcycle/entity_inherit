@@ -21,6 +21,30 @@ abstract class EntityInheritEntity extends EntityInheritEntityRevision implement
   abstract public function applies(EntityInheritSingleFieldValueInterface $field_value) : bool;
 
   /**
+   * {@inheritdoc}
+   */
+  public function presave() {
+    $this->presaveAsChild();
+    $this->presaveAsParent();
+  }
+
+  /**
+   * Presave this enity in its role as a child.
+   */
+  public function presaveAsChild() {
+    foreach ($this->getMergedParents()->preload()->toArray() as $entity) {
+      foreach ($entity->fieldValues()->toArray() as $fieldvalue) {
+        $this->updateField($fieldvalue);
+      }
+    }
+  }
+
+  /**
+   * Presave this enity in its role as a parent.
+   */
+  abstract public function presaveAsParent();
+
+  /**
    * Set a field value.
    *
    * @param string $field_name
@@ -31,18 +55,11 @@ abstract class EntityInheritEntity extends EntityInheritEntityRevision implement
   public function set(string $field_name, array $value) {
     $drupal_entity = $this->getDrupalEntity();
 
-    $drupal_entity->{$field_name} = $value;
+    // See https://github.com/mglaman/phpstan-drupal/issues/159.
+    // @phpstan-ignore-next-line
+    $drupal_entity->set($field_name, $value);
 
     $this->drupalEntity = $drupal_entity;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function update() {
-    foreach ($this->getMergedParents()->fieldValues()->toArray() as $field_value) {
-      $this->updateField($field_value);
-    }
   }
 
   /**

@@ -38,12 +38,14 @@ class EntityInheritEntityFactory {
    *   A type, for example "node".
    * @param string $id
    *   An id, for example "1".
+   * @param null|\Drupal\Core\Entity\EntityInterface $entity
+   *   The Drupal entity object, or NULL if we don't have it.
    *
    * @return \Drupal\entity_inherit\EntityInheritEntity\EntityInheritEntitySingleInterface
    *   An entity.
    */
-  public function fromTypeId(string $type, string $id) : EntityInheritEntitySingleInterface {
-    return new EntityInheritExistingEntity($type, $id, $this->app);
+  public function fromTypeIdEntity(string $type, string $id, $entity) : EntityInheritEntitySingleInterface {
+    return new EntityInheritExistingEntity($type, $id, $entity, $this->app);
   }
 
   /**
@@ -57,7 +59,7 @@ class EntityInheritEntityFactory {
    */
   public function fromEntity(EntityInterface $entity) : EntityInheritEntitySingleInterface {
     if ($entity->id()) {
-      return $this->fromTypeId($entity->getEntityTypeId(), $entity->id());
+      return $this->fromTypeIdEntity($entity->getEntityTypeId(), $entity->id(), $entity);
     }
     return new EntityInheritNewEntity($entity, $this->app);
   }

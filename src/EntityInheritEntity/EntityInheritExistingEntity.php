@@ -32,12 +32,14 @@ class EntityInheritExistingEntity extends EntityInheritEntity implements EntityI
    *   The Drupal entity type such as "node".
    * @param string $id
    *   The Drupal entity id such as 1.
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The Drupal entity object, or NULL if we don't have it.
    * @param \Drupal\entity_inherit\EntityInherit $app
    *   The global app.
    */
-  public function __construct(string $type, string $id, EntityInherit $app) {
+  public function __construct(string $type, string $id, EntityInterface $entity, EntityInherit $app) {
     $this->id = $id;
-    parent::__construct($type, $app);
+    parent::__construct($type, $entity, $app);
   }
 
   /**
@@ -46,7 +48,7 @@ class EntityInheritExistingEntity extends EntityInheritEntity implements EntityI
   public function applies(EntityInheritSingleFieldValueInterface $field_value) : bool {
     $field_name = $field_value->fieldName();
 
-    return ($this->hasField($field_name) && $this->value($field_name) == $field_value->previousValue() && $field_value->changed());
+    return ($this->value($field_name) == [] && $this->hasNewParents()) || ($this->hasField($field_name) && $this->value($field_name) == $field_value->previousValue() && $field_value->changed());
   }
 
   /**
@@ -132,7 +134,7 @@ class EntityInheritExistingEntity extends EntityInheritEntity implements EntityI
   /**
    * {@inheritdoc}
    */
-  public function presave() {
+  public function presaveAsParent() {
     $this->app->getQueue()->add($this->children()->toQueueable());
   }
 
