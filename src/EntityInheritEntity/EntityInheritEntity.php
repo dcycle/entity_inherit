@@ -55,6 +55,8 @@ abstract class EntityInheritEntity extends EntityInheritEntityRevision implement
   public function set(string $field_name, array $value) {
     $drupal_entity = $this->getDrupalEntity();
 
+    // See https://github.com/mglaman/phpstan-drupal/issues/159.
+    // @phpstan-ignore-next-line
     $drupal_entity->set($field_name, $value);
 
     $this->drupalEntity = $drupal_entity;

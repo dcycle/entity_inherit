@@ -38,7 +38,7 @@ class EntityInheritEntityFactory {
    *   A type, for example "node".
    * @param string $id
    *   An id, for example "1".
-   * @param NULL|\Drupal\Core\Entity\EntityInterface $entity
+   * @param null|\Drupal\Core\Entity\EntityInterface $entity
    *   The Drupal entity object, or NULL if we don't have it.
    *
    * @return \Drupal\entity_inherit\EntityInheritEntity\EntityInheritEntitySingleInterface

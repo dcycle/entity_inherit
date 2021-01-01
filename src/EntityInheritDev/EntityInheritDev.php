@@ -129,6 +129,8 @@ class EntityInheritDev {
     $this->print('Existing child gets new parent');
     $child3 = $this->createNode('Child saved once, then resaved with parent', 'page');
     $this->assertBodyValue($child3, '', 'Body is empty, child was just saved with no parent.');
+    // See https://github.com/mglaman/phpstan-drupal/issues/159.
+    // @phpstan-ignore-next-line
     $child3->set('field_parents', $parent->id());
     $child3->save();
     $this->assertBodyValue($child3, 'Hello', 'Body is set when existing node is saved with a new parent.');
@@ -136,7 +138,11 @@ class EntityInheritDev {
     $this->print('Existing child gets new parent which should not override its body field');
     $child4 = $this->createNode('Child saved once, then resaved with parent', 'page');
     $this->assertBodyValue($child4, '', 'Body is empty, child was just saved with no parent.');
+    // See https://github.com/mglaman/phpstan-drupal/issues/159.
+    // @phpstan-ignore-next-line
     $child4->set('field_parents', $parent->id());
+    // See https://github.com/mglaman/phpstan-drupal/issues/159.
+    // @phpstan-ignore-next-line
     $child4->set('body', [
       'value' => 'Hi',
       'format' => 'full_html',

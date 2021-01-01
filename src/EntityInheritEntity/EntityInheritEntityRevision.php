@@ -39,7 +39,7 @@ abstract class EntityInheritEntityRevision implements EntityInheritEntityRevisio
    *
    * @param string $type
    *   The Drupal entity type such as "node".
-   * @param NULL|\Drupal\Core\Entity\EntityInterface $entity
+   * @param null|\Drupal\Core\Entity\EntityInterface $entity
    *   The Drupal entity object, or NULL if we don't have it.
    * @param \Drupal\entity_inherit\EntityInherit $app
    *   The global app.

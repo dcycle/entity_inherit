@@ -32,7 +32,7 @@ class EntityInheritExistingEntity extends EntityInheritEntity implements EntityI
    *   The Drupal entity type such as "node".
    * @param string $id
    *   The Drupal entity id such as 1.
-   * @param NULL|\Drupal\Core\Entity\EntityInterface $entity
+   * @param \Drupal\Core\Entity\EntityInterface $entity
    *   The Drupal entity object, or NULL if we don't have it.
    * @param \Drupal\entity_inherit\EntityInherit $app
    *   The global app.
