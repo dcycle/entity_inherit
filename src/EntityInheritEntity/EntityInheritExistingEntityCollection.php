@@ -134,13 +134,4 @@ class EntityInheritExistingEntityCollection implements EntityInheritUpdatableEnt
     return $return;
   }
 
-  /**
-   * {@inheritdoc}
-   */
-  public function update() {
-    foreach ($this->toArray() as $entity) {
-      $entity->update();
-    }
-  }
-
 }

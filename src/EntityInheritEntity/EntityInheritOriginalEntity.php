@@ -20,7 +20,7 @@ class EntityInheritOriginalEntity extends EntityInheritEntityRevision {
    */
   public function __construct(EntityInterface $entity, EntityInherit $app) {
     $this->drupalEntity = $entity;
-    parent::__construct($entity->getEntityTypeId(), $app);
+    parent::__construct($entity->getEntityTypeId(), $entity, $app);
   }
 
   /**

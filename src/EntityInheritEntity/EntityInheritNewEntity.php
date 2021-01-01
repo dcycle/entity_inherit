@@ -31,7 +31,7 @@ class EntityInheritNewEntity extends EntityInheritEntity {
   public function __construct(EntityInterface $entity, EntityInherit $app) {
     $this->drupalEntity = $entity;
     $this->app = $app;
-    parent::__construct($entity->getEntityTypeId(), $app);
+    parent::__construct($entity->getEntityTypeId(), $entity, $app);
   }
 
   /**
@@ -69,12 +69,9 @@ class EntityInheritNewEntity extends EntityInheritEntity {
   /**
    * {@inheritdoc}
    */
-  public function presave() {
-    foreach ($this->getMergedParents()->preload()->toArray() as $entity) {
-      foreach ($entity->fieldValues()->toArray() as $fieldvalue) {
-        $this->updateField($fieldvalue);
-      }
-    }
+  public function presaveAsParent() {
+    // It is impossible for a new entity to be a parent of another entity.
+    // Do nothing.
   }
 
 }
