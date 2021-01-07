@@ -3,7 +3,6 @@
 namespace Drupal\entity_inherit\EntityInheritQueue;
 
 use Drupal\entity_inherit\EntityInherit;
-use Drupal\entity_inherit\EntityInheritEntity\EntityInheritSingleExistingEntityInterface;
 use Drupal\entity_inherit\Utilities\FriendTrait;
 
 /**
