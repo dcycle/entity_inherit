@@ -7,9 +7,6 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\entity_inherit\EntityInherit;
 use Drupal\entity_inherit\EntityInheritFieldValue\EntityInheritSingleFieldValueInterface;
 use Drupal\entity_inherit\EntityInheritFieldValue\EntityInheritFieldValueCollectionInterface;
-use Drupal\entity_inherit\EntityInheritQueue\EntityInheritQueueableCollectionInterface;
-use Drupal\entity_inherit\EntityInheritQueue\EntityInheritStoredQueueableCollection;
-use Drupal\entity_inherit\EntityInheritQueue\EntityInheritStoredQueueable;
 
 /**
  * An entity which preexists.
@@ -135,7 +132,8 @@ class EntityInheritExistingEntity extends EntityInheritEntity implements EntityI
    * {@inheritdoc}
    */
   public function presaveAsParent() {
-    $this->app->getQueue()->add($this->children()->toQueueable());
+    $field_values = $this->fieldValues();
+    $this->app->getQueue()->add(array_keys($this->children()->toArray()), $field_values->toOriginalArray(), $field_values->toChangedArray());
   }
 
   /**
@@ -150,15 +148,6 @@ class EntityInheritExistingEntity extends EntityInheritEntity implements EntityI
   /**
    * {@inheritdoc}
    */
-  public function toQueueable() : EntityInheritQueueableCollectionInterface {
-    $return = new EntityInheritStoredQueueableCollection();
-    $return->add(new EntityInheritStoredQueueable($this->toStorageId()));
-    return $return;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function toStorageId() : string {
     return $this->type . ':' . $this->id;
   }
@@ -167,7 +156,7 @@ class EntityInheritExistingEntity extends EntityInheritEntity implements EntityI
    * {@inheritdoc}
    */
   public function triggersQueue() : bool {
-    return (count($this->children()) && !$this->app->getQueue()->contains($this));
+    return (count($this->children()) && !$this->app->getQueue()->contains($this->toStorageId()));
   }
 
 }

@@ -5,7 +5,6 @@ namespace Drupal\entity_inherit\EntityInheritPlugin;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Utility\Error;
 use Drupal\entity_inherit\EntityInherit;
-use Drupal\entity_inherit\EntityInheritAction\EntityInheritActionInterface;
 use Drupal\entity_inherit\EntityInheritEntity\EntityInheritEntitySingleInterface;
 
 /**
@@ -30,13 +29,6 @@ class EntityInheritPluginCollection implements EntityInheritPluginInterface, \Co
    */
   public function __construct(EntityInherit $app) {
     $this->app = $app;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function broadcastAction(EntityInheritActionInterface $action, EntityInherit $app) {
-    $this->callOnPlugins('broadcastAction', [$action, $app]);
   }
 
   /**

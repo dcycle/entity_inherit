@@ -4,7 +4,6 @@
   <testsuites>
     <testsuite name="myproject">
       <directory>./tests/src/Unit</directory>
-      <directory>./modules/entity_inherit_verbose/tests/src/Unit</directory>
     </testsuite>
   </testsuites>
 </phpunit>

@@ -4,7 +4,6 @@ namespace Drupal\entity_inherit\EntityInheritPlugin;
 
 use Drupal\Component\Plugin\PluginBase;
 use Drupal\entity_inherit\EntityInherit;
-use Drupal\entity_inherit\EntityInheritAction\EntityInheritActionInterface;
 use Drupal\entity_inherit\EntityInheritEntity\EntityInheritEntitySingleInterface;
 
 /**
@@ -24,10 +23,5 @@ abstract class EntityInheritPluginBase extends PluginBase implements EntityInher
    * {@inheritdoc}
    */
   public function presave(EntityInheritEntitySingleInterface $entity, EntityInherit $app) {}
-
-  /**
-   * {@inheritdoc}
-   */
-  public function broadcastAction(EntityInheritActionInterface $action, EntityInherit $app) {}
 
 }

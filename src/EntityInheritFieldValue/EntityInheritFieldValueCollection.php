@@ -48,4 +48,26 @@ class EntityInheritFieldValueCollection implements EntityInheritFieldValueCollec
     return $this->fieldValues;
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function toChangedArray() : array {
+    $return = [];
+    foreach ($this->fieldValues as $key => $object) {
+      $return[$key] = $object->newValue();
+    }
+    return $return;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function toOriginalArray() : array {
+    $return = [];
+    foreach ($this->fieldValues as $key => $object) {
+      $return[$key] = $object->previousValue();
+    }
+    return $return;
+  }
+
 }

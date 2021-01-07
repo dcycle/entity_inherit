@@ -11,8 +11,8 @@ class EntityInheritQueueProcessorNoBatch extends EntityInheritQueueProcessor {
    * {@inheritdoc}
    */
   public function process() {
-    while ($next = $this->queue->items()->first()) {
-      print_r('----> Processing ' . $next);
+    while ($next = $this->queue->next()) {
+      print_r([__LINE__, $next, '----> Processing ' . $next['id']]);
     }
   }
 

@@ -43,7 +43,7 @@ The idea is to be able to change multiple nodes' values easily without resorting
 Extending this module
 -----
 
-You can extend this module using Drupal's plugin system. Please see the included Entity Inherit Verbose (entity_inherit_verbose) module, and plugins in the main entity_inherit module at ./src/Plugin/EntityInheritPlugin, for examples.
+You can extend this module using Drupal's plugin system. Please see included plugins for examples.
 
 Local development
 -----

@@ -33,13 +33,13 @@ class EntityInheritQueueProcessorFactory {
   /**
    * Obtain an appropriate processor.
    *
-   * @param \Drupal\entity_inherit\EntityInheritQueue\EntityInheritQueueInterface $queue
+   * @param \Drupal\entity_inherit\EntityInheritQueue\EntityInheritQueue $queue
    *   The queue.
    *
    * @return \Drupal\entity_inherit\EntityInheritQueue\EntityInheritQueueProcessorInterface
    *   A processor.
    */
-  public function processor(EntityInheritQueueInterface $queue) : EntityInheritQueueProcessorInterface {
+  public function processor(EntityInheritQueue $queue) : EntityInheritQueueProcessorInterface {
     switch (php_sapi_name()) {
       case 'cli':
         return new EntityInheritQueueProcessorNoBatch($queue);

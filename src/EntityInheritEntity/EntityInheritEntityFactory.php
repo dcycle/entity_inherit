@@ -49,7 +49,7 @@ class EntityInheritEntityFactory {
   }
 
   /**
-   * Get an entity from a type and id.
+   * Get an entity from an entity.
    *
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   A Drupal entity.
@@ -65,6 +65,25 @@ class EntityInheritEntityFactory {
   }
 
   /**
+   * Get an entity from an existing entity.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   A Drupal entity.
+   *
+   * @return \Drupal\entity_inherit\EntityInheritEntity\EntityInheritSingleExistingEntityInterface
+   *   An entity.
+   */
+  public function fromExistingEntity(EntityInterface $entity) : EntityInheritSingleExistingEntityInterface {
+    $candidate = $this->fromEntity($entity);
+
+    if (is_a($candidate, EntityInheritSingleExistingEntityInterface::class)) {
+      return $candidate;
+    }
+
+    throw new \Exception('The entity object provided could not be converted to an existing interface.');
+  }
+
+  /**
    * Get a new collection.
    *
    * @param array $drupal_entities
@@ -77,7 +96,7 @@ class EntityInheritEntityFactory {
     $return = new EntityInheritExistingEntityCollection($this->app);
 
     foreach ($drupal_entities as $drupal_entity) {
-      $return->add($this->app->wrap($drupal_entity));
+      $return->add($this->app->wrapExisting($drupal_entity));
     }
 
     return $return;

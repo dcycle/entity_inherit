@@ -15,4 +15,22 @@ interface EntityInheritFieldValueCollectionInterface extends EntityInheritFieldV
    */
   public function add(EntityInheritFieldValueInterface $items);
 
+  /**
+   * Get an array of fields with their original values.
+   *
+   * @return array
+   *   New field values, for example:
+   *   ['field_x' => [['value' => 'hi']]].
+   */
+  public function toChangedArray() : array;
+
+  /**
+   * Get an array of fields with their original values.
+   *
+   * @return array
+   *   Original field values, for example:
+   *   ['field_x' => [['value' => 'hello']]].
+   */
+  public function toOriginalArray() : array;
+
 }

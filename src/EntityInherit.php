@@ -2,6 +2,7 @@
 
 namespace Drupal\entity_inherit;
 
+use Drupal\Core\Entity\ContentEntityType;
 use Drupal\Core\Entity\EntityFieldManager;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManager;
@@ -15,14 +16,13 @@ use Drupal\Core\Utility\Error;
 use Drupal\entity_inherit\EntityInheritDev\EntityInheritDev;
 use Drupal\entity_inherit\EntityInheritEntity\EntityInheritEntityFactory;
 use Drupal\entity_inherit\EntityInheritEntity\EntityInheritEntitySingleInterface;
+use Drupal\entity_inherit\EntityInheritEntity\EntityInheritSingleExistingEntityInterface;
 use Drupal\entity_inherit\EntityInheritField\EntityInheritFieldFactory;
 use Drupal\entity_inherit\EntityInheritField\EntityInheritFieldListInterface;
 use Drupal\entity_inherit\EntityInheritFieldValue\EntityInheritFieldValueFactory;
 use Drupal\entity_inherit\EntityInheritPlugin\EntityInheritPluginCollection;
 use Drupal\entity_inherit\EntityInheritPlugin\EntityInheritPluginManager;
 use Drupal\entity_inherit\EntityInheritQueue\EntityInheritQueue;
-use Drupal\entity_inherit\EntityInheritQueue\EntityInheritQueueInterface;
-use Drupal\entity_inherit\EntityInheritQueue\EntityInheritQueueProcessorFactory;
 use Drupal\entity_inherit\EntityInheritStorage\EntityInheritStorage;
 use Drupal\entity_inherit\EntityInheritStorage\EntityInheritStorageInterface;
 
@@ -144,7 +144,7 @@ class EntityInherit {
    *   All field names for bundle.
    */
   public function bundleFieldNames(string $type, string $bundle) : array {
-    $candidates = $this->getEntityFieldManager()->getFieldDefinitions($type, $bundle);
+    $candidates = $this->getFieldDefinitions($type, $bundle);
     $filtered = $candidates;
 
     $this->plugins()->filterFields($filtered, $candidates, 'inheritable', $this);
@@ -233,6 +233,29 @@ class EntityInherit {
   }
 
   /**
+   * Get all field definitions, if possible, for a type and bundle.
+   *
+   * @param string $type
+   *   An entity type.
+   * @param string $bundle
+   *   An entity bundle.
+   *
+   * @return array
+   *   Field definitions, or an empty array if not possible.
+   */
+  public function getFieldDefinitions(string $type, string $bundle) : array {
+    $type_definitions = $this->getEntityTypeManager()->getDefinitions();
+
+    if (!array_key_exists($type, $type_definitions) || !is_a($type_definitions[$type], ContentEntityType::class)) {
+      // This will avoid a "LogicException with message 'Getting the base
+      // fields is not supported for entity type Menu.'" error.
+      return [];
+    }
+
+    return $this->getEntityFieldManager()->getFieldDefinitions($type, $bundle);
+  }
+
+  /**
    * Get the field value factory.
    *
    * @return \Drupal\entity_inherit\EntityInheritFieldValue\EntityInheritFieldValueFactory
@@ -245,31 +268,11 @@ class EntityInherit {
   /**
    * Get the Queue singleton.
    *
-   * @return \Drupal\entity_inherit\EntityInheritQueue\EntityInheritQueueInterface
+   * @return \Drupal\entity_inherit\EntityInheritQueue\EntityInheritQueue
    *   The Queue singleton.
    */
-  public function getQueue() : EntityInheritQueueInterface {
+  public function getQueue() : EntityInheritQueue {
     return $this->singleton(EntityInheritQueue::class);
-  }
-
-  /**
-   * Get the Queue singleton.
-   *
-   * @return \Drupal\entity_inherit\EntityInheritQueue\EntityInheritQueueProcessorFactory
-   *   The Queue processor factory singleton.
-   */
-  public function getQueueProcessorFactory() : EntityInheritQueueProcessorFactory {
-    return $this->singleton(EntityInheritQueueProcessorFactory::class);
-  }
-
-  /**
-   * Get the State service.
-   *
-   * @return \Drupal\Core\State\State
-   *   The State service.
-   */
-  public function getState() : State {
-    return $this->state;
   }
 
   /**
@@ -295,7 +298,7 @@ class EntityInherit {
    */
   public function inheritableFields($type, $bundle) : array {
     $all_fields = $this->allFields('inheritable');
-    $my_fields = $this->getEntityFieldManager()->getFieldDefinitions($type, $bundle);
+    $my_fields = $this->getFieldDefinitions($type, $bundle);
     $return = [];
     foreach ($all_fields as $id => $candidate) {
       if (array_key_exists($id, $my_fields)) {
@@ -495,6 +498,35 @@ class EntityInherit {
   }
 
   /**
+   * Set an array in a state variable.
+   *
+   * @param string $variable
+   *   A state variable name.
+   * @param array $value
+   *   A state variable value.
+   */
+  public function stateSetArray(string $variable, array $value) {
+    $this->state->set($variable, $value);
+  }
+
+  /**
+   * Get an array from a state variable.
+   *
+   * @param string $variable
+   *   A state variable name.
+   * @param array $default
+   *   A default value if the state variable is not an array or is not set.
+   *
+   * @return array
+   *   A state variable value, or an empty array
+   */
+  public function stateGetArray(string $variable, array $default = []) : array {
+    $candidate = $this->state->get($variable, $default);
+
+    return is_array($candidate) ? $candidate : $default;
+  }
+
+  /**
    * Create a field list object.
    *
    * @param array $field_names
@@ -590,6 +622,9 @@ class EntityInherit {
   /**
    * Wrap a Drupal entity into our own class for processings.
    *
+   * This entity can be in the process of creation, i.e. not have an id and
+   * not exist in the database.
+   *
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   A Drupal entity.
    *
@@ -598,6 +633,21 @@ class EntityInherit {
    */
   public function wrap(EntityInterface $entity) : EntityInheritEntitySingleInterface {
     return $this->getEntityFactory()->fromEntity($entity);
+  }
+
+  /**
+   * Wrap an existing Drupal entity into our own class for processings.
+   *
+   * This entity must exist in the database.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   A Drupal entity.
+   *
+   * @return \Drupal\entity_inherit\EntityInheritEntity\EntityInheritSingleExistingEntityInterface
+   *   Our wrapper around a Drupal entity.
+   */
+  public function wrapExisting(EntityInterface $entity) : EntityInheritSingleExistingEntityInterface {
+    return $this->getEntityFactory()->fromExistingEntity($entity);
   }
 
 }
