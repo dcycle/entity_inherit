@@ -15,4 +15,12 @@ interface EntityInheritQueueableCollectionInterface extends EntityInheritQueueab
    */
   public function add(EntityInheritQueueableInterface $items);
 
+  /**
+   * Get the first queueable item, if possible.
+   *
+   * @return null|\Drupal\entity_inherit\EntityInheritQueue\EntityInheritQueueableInterface
+   *   The queueable item, or NULL.
+   */
+  public function first();
+
 }
