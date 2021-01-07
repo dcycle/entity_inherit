@@ -67,11 +67,20 @@ class EntityInheritEntityFactory {
   /**
    * Get a new collection.
    *
+   * @param array $drupal_entities
+   *   An array of Drupal entities.
+   *
    * @return \Drupal\entity_inherit\EntityInheritEntity\EntityInheritExistingMultipleEntitiesInterface
    *   A new collection.
    */
-  public function newCollection() : EntityInheritExistingMultipleEntitiesInterface {
-    return new EntityInheritExistingEntityCollection($this->app);
+  public function newCollection(array $drupal_entities = []) : EntityInheritExistingMultipleEntitiesInterface {
+    $return = new EntityInheritExistingEntityCollection($this->app);
+
+    foreach ($drupal_entities as $drupal_entity) {
+      $return->add($this->app->wrap($drupal_entity));
+    }
+
+    return $return;
   }
 
 }

@@ -34,6 +34,13 @@ class EntityInheritQueueableCollection implements EntityInheritQueueableCollecti
   /**
    * {@inheritdoc}
    */
+  public function first() {
+    return array_shift($this->items);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function toArray() : array {
     return $this->items;
   }
