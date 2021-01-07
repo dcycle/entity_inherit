@@ -6,7 +6,7 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Utility\Error;
 use Drupal\entity_inherit\EntityInherit;
 use Drupal\entity_inherit\EntityInheritAction\EntityInheritActionInterface;
-use Drupal\entity_inherit\EntityInheritEntity\EntityInheritUpdatableEntityInterface;
+use Drupal\entity_inherit\EntityInheritEntity\EntityInheritEntitySingleInterface;
 
 /**
  * Abstraction around a collection of plugins.
@@ -54,7 +54,7 @@ class EntityInheritPluginCollection implements EntityInheritPluginInterface, \Co
   /**
    * {@inheritdoc}
    */
-  public function presave(EntityInheritUpdatableEntityInterface $entity, EntityInherit $app) {
+  public function presave(EntityInheritEntitySingleInterface $entity, EntityInherit $app) {
     $this->callOnPlugins('presave', [$entity, $app]);
   }
 

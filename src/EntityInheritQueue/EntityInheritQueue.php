@@ -3,6 +3,7 @@
 namespace Drupal\entity_inherit\EntityInheritQueue;
 
 use Drupal\entity_inherit\EntityInherit;
+use Drupal\entity_inherit\EntityInheritEntity\EntityInheritSingleExistingEntityInterface;
 use Drupal\entity_inherit\Utilities\FriendTrait;
 
 /**
@@ -43,6 +44,13 @@ class EntityInheritQueue implements EntityInheritQueueInterface {
    */
   public function add(EntityInheritQueueableInterface $items) {
     $this->items->add($items);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function contains(EntityInheritSingleExistingEntityInterface $entity) : bool {
+    return $this->items->containsId($entity->toStorageId());
   }
 
   /**

@@ -27,6 +27,13 @@ class EntityInheritStoredQueueable extends EntityInheritQueueable {
   /**
    * {@inheritdoc}
    */
+  public function containsId(string $id) : bool {
+    return $this->id == $id;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function toArray() {
     return [
       $this->id => $this,

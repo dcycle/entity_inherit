@@ -2,6 +2,8 @@
 
 namespace Drupal\entity_inherit\EntityInheritQueue;
 
+use Drupal\entity_inherit\EntityInheritEntity\EntityInheritSingleExistingEntityInterface;
+
 /**
  * A queue.
  */
@@ -14,6 +16,17 @@ interface EntityInheritQueueInterface {
    *   The items to add.
    */
   public function add(EntityInheritQueueableInterface $items);
+
+  /**
+   * Whether an entity is in a queue.
+   *
+   * @param \Drupal\entity_inherit\EntityInheritEntity\EntityInheritSingleExistingEntityInterface $entity
+   *   An entity.
+   *
+   * @return bool
+   *   Whether an entity is in a queue.
+   */
+  public function contains(EntityInheritSingleExistingEntityInterface $entity) : bool;
 
   /**
    * Get queuable items.

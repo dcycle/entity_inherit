@@ -163,4 +163,11 @@ class EntityInheritExistingEntity extends EntityInheritEntity implements EntityI
     return $this->type . ':' . $this->id;
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function triggersQueue() : bool {
+    return (count($this->children()) && !$this->app->getQueue()->contains($this));
+  }
+
 }

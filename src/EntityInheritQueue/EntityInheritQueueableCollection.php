@@ -34,6 +34,13 @@ class EntityInheritQueueableCollection implements EntityInheritQueueableCollecti
   /**
    * {@inheritdoc}
    */
+  public function containsId(string $id) : bool {
+    return array_key_exists($id, $this->items);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function toArray() : array {
     return $this->items;
   }
