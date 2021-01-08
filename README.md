@@ -22,7 +22,6 @@ For example,
 * node 2 has field_entity_inherit_parent, value "1"
 * node 1 has field field_whatever, value "hello"
 * node 1 is modified so that field_whatever changes from "hello" to "hi"
-* the current user has access to edit node 2
 * node 2's value for field_whatever changes to "hi".
 
 ### If an entity has a newly added value for field_entity_inherit_parent, all empty fields which exist in the parent, and are empty, are modified to contain the parent data.
@@ -32,7 +31,6 @@ for example,
 * node 1 has field field_whatever, value "hello"
 * node 2 has field field_whatever, which is empty.
 * node 2 is modified so that its field_entity_inherit_parent contains a reference to node 1.
-* the current user has access to view node 1
 * node 2's value for field_whatever changes to "hello".
 
 Raison d'être
@@ -44,6 +42,11 @@ Extending this module
 -----
 
 You can extend this module using Drupal's plugin system. Please see included plugins for examples.
+
+Note about permissions
+-----
+
+This module does not check for access or permissions: if a user has the permission to change a parent node, changes will propagate to child nodes whether or not the current user has access to change the child nodes. Similarly if a user edits a child node and modifies its parent node, content from that parent node will propage to child nodes whether or not the user has access to view the parent node. It is up to the site builder to set up the "parent" field(s) to prevent undue access.
 
 Local development
 -----
