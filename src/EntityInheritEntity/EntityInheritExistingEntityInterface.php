@@ -17,4 +17,12 @@ interface EntityInheritExistingEntityInterface {
    */
   public function fieldValues() : EntityInheritFieldValueCollectionInterface;
 
+  /**
+   * Get as an array.
+   *
+   * @return array
+   *   Entities as an array.
+   */
+  public function toArray() : array;
+
 }

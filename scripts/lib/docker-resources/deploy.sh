@@ -23,13 +23,12 @@ drush si -y --db-url "mysqli://root:drupal@mysql/drupal" standard
 cat /var/www/html/modules/custom/entity_inherit/scripts/lib/docker-resources/dev-settings.txt >> /var/www/html/sites/default/settings.php
 
 drush en -y \
-  entity_inherit \
-  entity_inherit_verbose
+  entity_inherit
 
 echo "Adding the reference field"
 rm -rf /drupal-settings
 mkdir -p /drupal-settings
-drush cex --destination=/drupal-settings
+drush cex -y --destination=/drupal-settings
 /bin/cp -r /var/www/html/modules/custom/entity_inherit/scripts/lib/docker-resources/dev-config/* /drupal-settings/
 drush cim -y --source=/drupal-settings
 

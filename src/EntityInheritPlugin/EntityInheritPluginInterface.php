@@ -3,8 +3,7 @@
 namespace Drupal\entity_inherit\EntityInheritPlugin;
 
 use Drupal\entity_inherit\EntityInherit;
-use Drupal\entity_inherit\EntityInheritAction\EntityInheritActionInterface;
-use Drupal\entity_inherit\EntityInheritEntity\EntityInheritUpdatableEntityInterface;
+use Drupal\entity_inherit\EntityInheritEntity\EntityInheritEntitySingleInterface;
 
 /**
  * An interface for all EntityInheritPlugin type plugins.
@@ -29,21 +28,11 @@ interface EntityInheritPluginInterface {
   /**
    * Act on an entity being saved.
    *
-   * @param \Drupal\entity_inherit\EntityInheritEntity\EntityInheritUpdatableEntityInterface $entity
+   * @param \Drupal\entity_inherit\EntityInheritEntity\EntityInheritEntitySingleInterface $entity
    *   An entity being presaved.
    * @param \Drupal\entity_inherit\EntityInherit $app
    *   The app singleton.
    */
-  public function presave(EntityInheritUpdatableEntityInterface $entity, EntityInherit $app);
-
-  /**
-   * Broadcast an action to plugins.
-   *
-   * @param \Drupal\entity_inherit\EntityInheritAction\EntityInheritActionInterface $action
-   *   An action being performed.
-   * @param \Drupal\entity_inherit\EntityInherit $app
-   *   The app singleton.
-   */
-  public function broadcastAction(EntityInheritActionInterface $action, EntityInherit $app);
+  public function presave(EntityInheritEntitySingleInterface $entity, EntityInherit $app);
 
 }

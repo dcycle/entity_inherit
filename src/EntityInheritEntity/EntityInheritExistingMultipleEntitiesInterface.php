@@ -5,15 +5,15 @@ namespace Drupal\entity_inherit\EntityInheritEntity;
 /**
  * A group of existing entities.
  */
-interface EntityInheritExistingMultipleEntitiesInterface extends EntityInheritExistingEntityCollectionInterface, EntityInheritReadableEntityInterface, \Countable {
+interface EntityInheritExistingMultipleEntitiesInterface extends EntityInheritExistingEntityInterface, EntityInheritExistingEntityCollectionInterface, EntityInheritReadableEntityInterface, EntityInheritUpdatableEntityInterface, \Countable {
 
   /**
    * Add items to the collection.
    *
-   * @param \Drupal\entity_inherit\EntityInheritEntity\EntityInheritExistingEntityCollectionInterface $items
+   * @param \Drupal\entity_inherit\EntityInheritEntity\EntityInheritExistingEntityInterface $items
    *   Items to add.
    */
-  public function add(EntityInheritExistingEntityCollectionInterface $items);
+  public function add(EntityInheritExistingEntityInterface $items);
 
   /**
    * Get this collection with all items preloaded.

@@ -16,7 +16,6 @@ spl_autoload_register(function ($class) {
   $custom_code = [
     'src' => ['entity_inherit'],
     'modules/entity_inherit_details/src' => ['entity_inherit_details'],
-    'modules/entity_inherit_verbose/src' => ['entity_inherit_verbose'],
     'tests/src/Unit' => [
       'Tests',
       'entity_inherit',

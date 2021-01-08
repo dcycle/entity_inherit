@@ -31,7 +31,19 @@ class EntityInheritStorage implements EntityInheritStorageInterface {
    * {@inheritdoc}
    */
   public function getChildrenOf(string $type, string $id) : EntityInheritExistingMultipleEntitiesInterface {
-    return $this->app->getEntityFactory()->newCollection();
+    $drupal_nodes = [];
+
+    foreach (array_keys($this->app->getParentEntityFields()->validOnly('parent')->toArray()) as $field) {
+      $drupal_nodes = array_merge($drupal_nodes,
+        $this->app->getEntityTypeManager()
+          ->getListBuilder($type)
+          ->getStorage()
+          ->loadByProperties([
+            $field => $id,
+          ]));
+    }
+
+    return $this->app->getEntityFactory()->newCollection($drupal_nodes);
   }
 
 }

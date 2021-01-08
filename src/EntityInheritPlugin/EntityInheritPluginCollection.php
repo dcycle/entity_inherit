@@ -5,8 +5,7 @@ namespace Drupal\entity_inherit\EntityInheritPlugin;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Utility\Error;
 use Drupal\entity_inherit\EntityInherit;
-use Drupal\entity_inherit\EntityInheritAction\EntityInheritActionInterface;
-use Drupal\entity_inherit\EntityInheritEntity\EntityInheritUpdatableEntityInterface;
+use Drupal\entity_inherit\EntityInheritEntity\EntityInheritEntitySingleInterface;
 
 /**
  * Abstraction around a collection of plugins.
@@ -35,13 +34,6 @@ class EntityInheritPluginCollection implements EntityInheritPluginInterface, \Co
   /**
    * {@inheritdoc}
    */
-  public function broadcastAction(EntityInheritActionInterface $action, EntityInherit $app) {
-    $this->callOnPlugins('broadcastAction', [$action, $app]);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function filterFields(array &$field_names, array $original, string $category, EntityInherit $app) {
     $this->callOnPlugins('filterFields', [
       &$field_names,
@@ -54,7 +46,7 @@ class EntityInheritPluginCollection implements EntityInheritPluginInterface, \Co
   /**
    * {@inheritdoc}
    */
-  public function presave(EntityInheritUpdatableEntityInterface $entity, EntityInherit $app) {
+  public function presave(EntityInheritEntitySingleInterface $entity, EntityInherit $app) {
     $this->callOnPlugins('presave', [$entity, $app]);
   }
 

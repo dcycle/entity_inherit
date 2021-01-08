@@ -5,11 +5,9 @@ namespace Drupal\entity_inherit\EntityInheritEntity;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\entity_inherit\EntityInherit;
+use Drupal\entity_inherit\EntityInheritFieldValue\EntityInheritFieldValue;
 use Drupal\entity_inherit\EntityInheritFieldValue\EntityInheritSingleFieldValueInterface;
 use Drupal\entity_inherit\EntityInheritFieldValue\EntityInheritFieldValueCollectionInterface;
-use Drupal\entity_inherit\EntityInheritQueue\EntityInheritQueueableCollectionInterface;
-use Drupal\entity_inherit\EntityInheritQueue\EntityInheritStoredQueueableCollection;
-use Drupal\entity_inherit\EntityInheritQueue\EntityInheritStoredQueueable;
 
 /**
  * An entity which preexists.
@@ -32,12 +30,12 @@ class EntityInheritExistingEntity extends EntityInheritEntity implements EntityI
    *   The Drupal entity type such as "node".
    * @param string $id
    *   The Drupal entity id such as 1.
-   * @param \Drupal\Core\Entity\EntityInterface $entity
+   * @param null|\Drupal\Core\Entity\EntityInterface $entity
    *   The Drupal entity object, or NULL if we don't have it.
    * @param \Drupal\entity_inherit\EntityInherit $app
    *   The global app.
    */
-  public function __construct(string $type, string $id, EntityInterface $entity, EntityInherit $app) {
+  public function __construct(string $type, string $id, $entity, EntityInherit $app) {
     $this->id = $id;
     parent::__construct($type, $entity, $app);
   }
@@ -135,7 +133,26 @@ class EntityInheritExistingEntity extends EntityInheritEntity implements EntityI
    * {@inheritdoc}
    */
   public function presaveAsParent() {
-    $this->app->getQueue()->add($this->children()->toQueueable());
+    $field_values = $this->fieldValues();
+    $this->app->getQueue()->add(array_keys($this->children()->toArray()), $field_values->toOriginalArray(), $field_values->toChangedArray());
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function process(array $parent) {
+    $entity = $this->getDrupalEntity();
+
+    foreach ($parent['original'] as $field => $original_value) {
+      if (array_key_exists($field, $parent['changed']) && $parent['changed'][$field] != $parent['original'][$field]) {
+        $fieldvalue = new EntityInheritFieldValue($this->app, $field, $parent['changed'][$field], $parent['original'][$field]);
+        $this->updateField($fieldvalue);
+      }
+    }
+
+    $entity->save();
+
+    $this->drupalEntity = $entity;
   }
 
   /**
@@ -150,17 +167,15 @@ class EntityInheritExistingEntity extends EntityInheritEntity implements EntityI
   /**
    * {@inheritdoc}
    */
-  public function toQueueable() : EntityInheritQueueableCollectionInterface {
-    $return = new EntityInheritStoredQueueableCollection();
-    $return->add(new EntityInheritStoredQueueable($this->toStorageId()));
-    return $return;
+  public function toStorageId() : string {
+    return $this->type . ':' . $this->id;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function toStorageId() : string {
-    return $this->type . ':' . $this->id;
+  public function triggersQueue() : bool {
+    return (count($this->children()) && !$this->app->getQueue()->contains($this->toStorageId()));
   }
 
 }

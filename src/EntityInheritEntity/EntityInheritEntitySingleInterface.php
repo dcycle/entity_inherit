@@ -39,4 +39,15 @@ interface EntityInheritEntitySingleInterface extends EntityInheritUpdatableEntit
    */
   public function presave();
 
+  /**
+   * Whether presaving this entity should trigger the queue.
+   *
+   * An entity triggered modified by the queue should not trigger the queue,
+   * otherwise we'd have an infinite loop.
+   *
+   * @return bool
+   *   Whether presaving this entity should trigger the queue.
+   */
+  public function triggersQueue() : bool;
+
 }

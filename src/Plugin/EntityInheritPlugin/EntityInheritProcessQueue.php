@@ -3,7 +3,7 @@
 namespace Drupal\entity_inherit\Plugin\EntityInheritPlugin;
 
 use Drupal\entity_inherit\EntityInherit;
-use Drupal\entity_inherit\EntityInheritEntity\EntityInheritUpdatableEntityInterface;
+use Drupal\entity_inherit\EntityInheritEntity\EntityInheritEntitySingleInterface;
 use Drupal\entity_inherit\EntityInheritPlugin\EntityInheritPluginBase;
 
 /**
@@ -24,8 +24,10 @@ class EntityInheritProcessQueue extends EntityInheritPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function presave(EntityInheritUpdatableEntityInterface $entity, EntityInherit $app) {
-    $app->getQueue()->process();
+  public function presave(EntityInheritEntitySingleInterface $entity, EntityInherit $app) {
+    if ($entity->triggersQueue()) {
+      $app->getQueue()->process();
+    }
   }
 
 }

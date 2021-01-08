@@ -78,7 +78,7 @@ class EntityInheritDev {
 
     // See https://github.com/mglaman/phpstan-drupal/issues/159.
     // @phpstan-ignore-next-line
-    $this->assert($node->get('body')->getValue(), $expected, 'node ' . $node->id() . ': ' . $message);
+    $this->assert($node->get('body')->getValue(), $expected, 'body value of node ' . $node->id() . ' is ' . serialize($expected) . ': ' . $message);
   }
 
   /**
@@ -153,8 +153,28 @@ class EntityInheritDev {
     $this->print('Parent changes; child should change as well.');
     // See https://github.com/mglaman/phpstan-drupal/issues/159.
     // @phpstan-ignore-next-line
-    $parent->set('body', 'Hi');
+    $parent->set('body', [
+      'value' => 'Changed in parent, should propagate to child.',
+      'format' => 'full_html',
+    ]);
     $parent->save();
+
+    $child = Node::load($child->id());
+    $this->assertBodyValue($child, 'Changed in parent, should propagate to child.', 'Body of child is updated when parent is updated.');
+
+    $child->set('body', [
+      'value' => 'Hi there!',
+      'format' => 'full_html',
+    ]);
+    // See https://github.com/mglaman/phpstan-drupal/issues/159.
+    // @phpstan-ignore-next-line
+    $parent->set('body', [
+      'value' => "Whats up?",
+      'format' => 'full_html',
+    ]);
+    $parent->save();
+    $child = Node::load($child->id());
+    $this->assertBodyValue($child, 'Hi there!', 'Body of child is not updated by parent unless it is already the same as parent.');
   }
 
   /**

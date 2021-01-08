@@ -74,4 +74,11 @@ class EntityInheritNewEntity extends EntityInheritEntity {
     // Do nothing.
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function triggersQueue() : bool {
+    return FALSE;
+  }
+
 }

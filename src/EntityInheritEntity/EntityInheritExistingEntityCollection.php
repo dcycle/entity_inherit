@@ -4,8 +4,6 @@ namespace Drupal\entity_inherit\EntityInheritEntity;
 
 use Drupal\entity_inherit\EntityInherit;
 use Drupal\entity_inherit\EntityInheritFieldValue\EntityInheritFieldValueCollectionInterface;
-use Drupal\entity_inherit\EntityInheritQueue\EntityInheritQueueableCollection;
-use Drupal\entity_inherit\EntityInheritQueue\EntityInheritQueueableCollectionInterface;
 
 /**
  * An collection of existing entities.
@@ -40,7 +38,7 @@ class EntityInheritExistingEntityCollection implements EntityInheritUpdatableEnt
   /**
    * {@inheritdoc}
    */
-  public function add(EntityInheritExistingEntityCollectionInterface $items) {
+  public function add(EntityInheritExistingEntityInterface $items) {
     $this->entities += $items->toArray();
   }
 
@@ -116,19 +114,6 @@ class EntityInheritExistingEntityCollection implements EntityInheritUpdatableEnt
 
     foreach ($this->entities as $entity) {
       $return[$entity->getType()][] = $entity->getId();
-    }
-
-    return $return;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function toQueueable() : EntityInheritQueueableCollectionInterface {
-    $return = new EntityInheritQueueableCollection();
-
-    foreach ($this->toArray() as $entity) {
-      $return->add($entity->toQueueable());
     }
 
     return $return;

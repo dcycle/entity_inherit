@@ -49,7 +49,7 @@ class EntityInheritEntityFactory {
   }
 
   /**
-   * Get an entity from a type and id.
+   * Get an entity from an entity.
    *
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   A Drupal entity.
@@ -65,13 +65,69 @@ class EntityInheritEntityFactory {
   }
 
   /**
+   * Get an entity from an existing entity.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   A Drupal entity.
+   *
+   * @return \Drupal\entity_inherit\EntityInheritEntity\EntityInheritSingleExistingEntityInterface
+   *   An entity.
+   */
+  public function fromExistingEntity(EntityInterface $entity) : EntityInheritSingleExistingEntityInterface {
+    $candidate = $this->fromEntity($entity);
+
+    if (is_a($candidate, EntityInheritSingleExistingEntityInterface::class)) {
+      return $candidate;
+    }
+
+    throw new \Exception('The entity object provided could not be converted to an existing interface.');
+  }
+
+  /**
+   * Get a new entity from a queueable item.
+   *
+   * @param array $item
+   *   A queueable item.
+   *
+   * @return \Drupal\entity_inherit\EntityInheritEntity\EntityInheritSingleExistingEntityInterface
+   *   An entity if possible.
+   *
+   * @throws \Exception
+   */
+  public function fromQueueableItem(array $item) : EntityInheritSingleExistingEntityInterface {
+    if (!array_key_exists('id', $item)) {
+      throw new \Exception('id key is required.');
+    }
+    $parts = explode(':', $item['id']);
+    if (count($parts) != 2) {
+      throw new \Exception('id key is expected to be in the format type:id.');
+    }
+    $type = $parts[0];
+    $id = $parts[1];
+    $candidate = $this->fromTypeIdEntity($type, $id, NULL);
+    if (!is_a($candidate, EntityInheritSingleExistingEntityInterface::class)) {
+      throw new \Exception('Expecting an existing single interface.');
+    }
+    return $candidate;
+  }
+
+  /**
    * Get a new collection.
+   *
+   * @param array $drupal_entities
+   *   An array of Drupal entities.
    *
    * @return \Drupal\entity_inherit\EntityInheritEntity\EntityInheritExistingMultipleEntitiesInterface
    *   A new collection.
    */
-  public function newCollection() : EntityInheritExistingMultipleEntitiesInterface {
-    return new EntityInheritExistingEntityCollection($this->app);
+  public function newCollection(array $drupal_entities = []) : EntityInheritExistingMultipleEntitiesInterface {
+    $return = new EntityInheritExistingEntityCollection($this->app);
+
+    foreach ($drupal_entities as $drupal_entity) {
+      $return->add($this->app->wrapExisting($drupal_entity));
+    }
+
+    return $return;
   }
 
 }
