@@ -411,8 +411,7 @@ class EntityInherit {
       $this->plugins()->presave($wrapped_entity, $this);
     }
     catch (\Throwable $t) {
-      $this->watchdogThrowable($t);
-      $this->userErrorMessage($this->t('Entity Inherit encountered an error. See the log for details.'));
+      $this->watchdogAndUserError($t, $this->t('Entity Inherit encountered an error.'));
     }
   }
 
@@ -570,6 +569,17 @@ class EntityInherit {
   }
 
   /**
+   * Mockable wrapper around \Drupal::service('uuid')->generate().
+   */
+  protected function uuid() {
+    // @codingStandardsIgnoreStart
+    // Feels like overkill to inject the uuid service.
+    // @phpstan-ignore-next-line
+    return \Drupal::service('uuid')->generate();
+    // @codingStandardsIgnoreEnd
+  }
+
+  /**
    * Whether or not a field name is a valid parent field.
    *
    * @param string $field_name
@@ -583,6 +593,21 @@ class EntityInherit {
    */
   public function validFieldName(string $field_name, string $category) : bool {
     return in_array($field_name, array_keys($this->allFields($category)));
+  }
+
+  /**
+   * Log a \Throwable to the watchdog, assigns it a UUID; displays a user error.
+   *
+   * @param \Throwable $t
+   *   A \throwable.
+   * @param string $message
+   *   An error message.
+   */
+  public function watchdogAndUserError(\Throwable $t, string $message = '') {
+    $uuid = $this->uuid();
+    $message .= $message ? ' ' : '';
+    $this->watchdogThrowable($t, $message . $uuid);
+    $this->userErrorMessage($message . $this->t('Error has been logged with id @i.', ['@i' => $uuid]));
   }
 
   /**
