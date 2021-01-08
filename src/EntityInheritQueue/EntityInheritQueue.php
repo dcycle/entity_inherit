@@ -2,15 +2,17 @@
 
 namespace Drupal\entity_inherit\EntityInheritQueue;
 
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\entity_inherit\EntityInherit;
 use Drupal\entity_inherit\Utilities\FriendTrait;
 
 /**
  * A queue.
  */
-class EntityInheritQueue {
+class EntityInheritQueue implements \Countable {
 
   use FriendTrait;
+  use StringTranslationTrait;
 
   /**
    * The queueable items.
@@ -91,6 +93,16 @@ class EntityInheritQueue {
   }
 
   /**
+   * Get the number of items in the queue.
+   *
+   * @return int
+   *   Number of items in the queue.
+   */
+  public function count() : int {
+    return count($this->getItems()['items']);
+  }
+
+  /**
    * Get queue items from the state variable.
    *
    * @return array
@@ -116,14 +128,53 @@ class EntityInheritQueue {
 
     $this->setItems($queue);
 
-    return $return;
+    return $return ?: [];
   }
 
   /**
-   * {@inheritdoc}
+   * Get a processor.
+   */
+  public function processor() {
+    return $this->app->singleton(EntityInheritQueueProcessorFactory::class)->processor($this);
+  }
+
+  /**
+   * Process the queue.
    */
   public function process() {
-    $this->app->singleton(EntityInheritQueueProcessorFactory::class)->processor($this)->process();
+    $this->processor()->process();
+  }
+
+  /**
+   * Process the next item in the queue.
+   *
+   * @return string
+   *   The name of the item which was processed; empty string if none..
+   */
+  public function processNext() : string {
+    $next = $this->next();
+
+    if (array_key_exists('id', $next)) {
+      $this->processSingle($next);
+      return $next['id'];
+    }
+    return '';
+  }
+
+  /**
+   * Process an item as represented by an array.
+   *
+   * @param array $item
+   *   An item represented by a queue array.
+   */
+  public function processSingle(array $item) {
+    try {
+      $this->app->getEntityFactory()->fromQueueableItem($item)->process($item);
+    }
+    catch (\Throwable $t) {
+      $this->app->watchdogThrowable($t);
+      $this->app->userErrorMessage($this->t('Entity Inherit could not process the item @i. Error has been logged.', ['@i' => isset($item['id']) ? $item['id'] : $this->t('[id not available]')]));
+    }
   }
 
   /**

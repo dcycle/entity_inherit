@@ -84,6 +84,34 @@ class EntityInheritEntityFactory {
   }
 
   /**
+   * Get a new entity from a queueable item.
+   *
+   * @param array $item
+   *   A queueable item.
+   *
+   * @return \Drupal\entity_inherit\EntityInheritEntity\EntityInheritSingleExistingEntityInterface
+   *   An entity if possible.
+   *
+   * @throws \Exception
+   */
+  public function fromQueueableItem(array $item) : EntityInheritSingleExistingEntityInterface {
+    if (!array_key_exists('id', $item)) {
+      throw new \Exception('id key is required.');
+    }
+    $parts = explode(':', $item['id']);
+    if (count($parts) != 2) {
+      throw new \Exception('id key is expected to be in the format type:id.');
+    }
+    $type = $parts[0];
+    $id = $parts[1];
+    $candidate = $this->fromTypeIdEntity($type, $id, NULL);
+    if (!is_a($candidate, EntityInheritSingleExistingEntityInterface::class)) {
+      throw new \Exception('Expecting an existing single interface.');
+    }
+    return $candidate;
+  }
+
+  /**
    * Get a new collection.
    *
    * @param array $drupal_entities

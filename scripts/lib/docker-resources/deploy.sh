@@ -28,7 +28,7 @@ drush en -y \
 echo "Adding the reference field"
 rm -rf /drupal-settings
 mkdir -p /drupal-settings
-drush cex --destination=/drupal-settings
+drush cex -y --destination=/drupal-settings
 /bin/cp -r /var/www/html/modules/custom/entity_inherit/scripts/lib/docker-resources/dev-config/* /drupal-settings/
 drush cim -y --source=/drupal-settings
 

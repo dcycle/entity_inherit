@@ -78,7 +78,7 @@ class EntityInheritDev {
 
     // See https://github.com/mglaman/phpstan-drupal/issues/159.
     // @phpstan-ignore-next-line
-    $this->assert($node->get('body')->getValue(), $expected, 'node ' . $node->id() . ': ' . $message);
+    $this->assert($node->get('body')->getValue(), $expected, 'body value of node ' . $node->id() . ' is ' . serialize($expected) . ': ' . $message);
   }
 
   /**
@@ -154,13 +154,13 @@ class EntityInheritDev {
     // See https://github.com/mglaman/phpstan-drupal/issues/159.
     // @phpstan-ignore-next-line
     $parent->set('body', [
-      'value' => 'Greetings',
+      'value' => 'Changed in parent, should propagate to child.',
       'format' => 'full_html',
     ]);
     $parent->save();
 
     $child = Node::load($child->id());
-    $this->assertBodyValue($child, 'Greetings', 'Body of child is updated when parent is updated.');
+    $this->assertBodyValue($child, 'Changed in parent, should propagate to child.', 'Body of child is updated when parent is updated.');
 
     $child->set('body', [
       'value' => 'Hi there!',

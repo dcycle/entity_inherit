@@ -12,7 +12,7 @@ echo '=> Linting code.'
 echo '=> Unit tests.'
 ./scripts/php-unit.sh
 
-echo '=> Check for deprcated code'
+echo '=> Check for deprecated code'
 ./scripts/check-deprecated.sh
 
 echo '=> Static analysis'

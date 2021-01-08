@@ -8,6 +8,14 @@ namespace Drupal\entity_inherit\EntityInheritEntity;
 interface EntityInheritSingleExistingEntityInterface extends EntityInheritExistingEntityInterface {
 
   /**
+   * Process this entity based on a changed parent.
+   *
+   * @param array $parent
+   *   A parent information, as a queueable item.
+   */
+  public function process(array $parent);
+
+  /**
    * Get a unique string which identifies this object.
    *
    * @return string
