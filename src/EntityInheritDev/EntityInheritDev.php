@@ -104,9 +104,7 @@ class EntityInheritDev {
   }
 
   /**
-   * Test a use case where a new child is created for an existing parent.
-   *
-   * The body field should be inherited because it's empty in the child.
+   * Test the normal execution of the code.
    */
   public function happyPath() {
     $this->print('New child of existing parent');
@@ -175,6 +173,9 @@ class EntityInheritDev {
     $parent->save();
     $child = Node::load($child->id());
     $this->assertBodyValue($child, 'Hi there!', 'Body of child is not updated by parent unless it is already the same as parent.');
+
+    $this->print('Make sure it is possible to save a node which does not have the parent fields.');
+    $parent = $this->createNode('Node which does not have parent field', 'article');
   }
 
   /**
@@ -195,7 +196,7 @@ class EntityInheritDev {
   public function createNode(string $title, string $type, array $parents = [], array $other = []) {
     $this->print('Creating node ' . $title);
     $node = Node::create([
-      'type' => 'page',
+      'type' => $type,
       'title' => $title,
       'field_parents' => $this->formatParents($parents),
     ] + $other);
