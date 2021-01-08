@@ -12,7 +12,7 @@ use Drupal\entity_inherit\EntityInheritFieldValue\EntityInheritFieldValueCollect
 /**
  * An entity which preexists.
  */
-class EntityInheritExistingEntity extends EntityInheritEntity implements EntityInheritSingleExistingEntityInterface, EntityInheritExistingEntityCollectionInterface, EntityInheritExistingEntityInterface {
+class EntityInheritExistingEntity extends EntityInheritEntity implements EntityInheritSingleExistingEntityInterface, EntityInheritExistingEntityCollectionInterface {
 
   use StringTranslationTrait;
 

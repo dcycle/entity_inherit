@@ -8,7 +8,7 @@ use Drupal\entity_inherit\EntityInheritFieldValue\EntityInheritFieldValueCollect
 /**
  * An collection of existing entities.
  */
-class EntityInheritExistingEntityCollection implements EntityInheritUpdatableEntityInterface, EntityInheritExistingMultipleEntitiesInterface, EntityInheritExistingEntityInterface {
+class EntityInheritExistingEntityCollection implements EntityInheritUpdatableEntityInterface, EntityInheritExistingMultipleEntitiesInterface {
 
   /**
    * The app singleton.
