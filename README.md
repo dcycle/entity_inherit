@@ -48,6 +48,11 @@ Note about permissions
 
 This module does not check for access or permissions: if a user has the permission to change a parent node, changes will propagate to child nodes whether or not the current user has access to change the child nodes. Similarly if a user edits a child node and modifies its parent node, content from that parent node will propage to child nodes whether or not the user has access to view the parent node. It is up to the site builder to set up the "parent" field(s) to prevent undue access.
 
+Note about infinite loops
+-----
+
+This module will not check for infinite loops. For example, if entity A inherits from entity B which inherits from entity A, it will result in errors. Site builders are responsible for avoiding such scenarios.
+
 Local development
 -----
 
