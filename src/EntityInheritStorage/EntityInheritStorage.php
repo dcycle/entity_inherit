@@ -31,19 +31,35 @@ class EntityInheritStorage implements EntityInheritStorageInterface {
    * {@inheritdoc}
    */
   public function getChildrenOf(string $type, string $id) : EntityInheritExistingMultipleEntitiesInterface {
-    $drupal_nodes = [];
+    $drupal_entities = [];
 
     foreach (array_keys($this->app->getParentEntityFields()->validOnly('parent')->toArray()) as $field) {
-      $drupal_nodes = array_merge($drupal_nodes,
-        $this->app->getEntityTypeManager()
-          ->getListBuilder($type)
-          ->getStorage()
-          ->loadByProperties([
-            $field => $id,
-          ]));
+      $drupal_entities = array_merge($drupal_entities, $this->getReferencingEntities($field, $type, $id));
     }
 
-    return $this->app->getEntityFactory()->newCollection($drupal_nodes);
+    return $this->app->getEntityFactory()->newCollection($drupal_entities);
+  }
+
+  /**
+   * Get all entities whose source field targets entity of specified type, id.
+   *
+   * @param string $source_field
+   *   An entity's source field such as 'field_parents'.
+   * @param string $target_type
+   *   An entity's target type such as 'node'.
+   * @param string $target_id
+   *   An entity's target id such as '1'.
+   *
+   * @return array
+   *   Array of Drupal entities.
+   */
+  public function getReferencingEntities(string $source_field, string $target_type, string $target_id) : array {
+    return $this->app->getEntityTypeManager()
+      ->getListBuilder($target_type)
+      ->getStorage()
+      ->loadByProperties([
+        $source_field => $target_id,
+      ]);
   }
 
 }
