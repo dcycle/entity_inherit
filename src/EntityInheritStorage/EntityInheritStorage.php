@@ -54,6 +54,11 @@ class EntityInheritStorage implements EntityInheritStorageInterface {
    *   Array of Drupal entities.
    */
   public function getReferencingEntities(string $source_field, string $target_type, string $target_id) : array {
+    print_r([
+      $source_field,
+      $target_type,
+      $target_id,
+    ]);
     return $this->app->getEntityTypeManager()
       ->getListBuilder($target_type)
       ->getStorage()
