@@ -628,12 +628,10 @@ class EntityInherit {
    * @param mixed $link
    *   A link to associate with the message.
    */
-  public function watchdogThrowable(\Throwable $t, $message = NULL, $variables = [], $severity = RfcLogLevel::ERROR, $link = NULL) {
+  public function watchdogThrowable(\Throwable $t, $message = '', $variables = [], $severity = RfcLogLevel::ERROR, $link = NULL) {
 
-    // Use a default value if $message is not set.
-    if (empty($message)) {
-      $message = '%type: @message in %function (line %line of %file).';
-    }
+    $message .= $message ? ' ' : '';
+    $message .= '%type: @message in %function (line %line of %file).';
 
     if ($link) {
       $variables['link'] = $link;
