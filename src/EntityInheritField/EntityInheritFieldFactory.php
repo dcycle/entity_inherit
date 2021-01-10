@@ -31,35 +31,39 @@ class EntityInheritFieldFactory {
   }
 
   /**
-   * Create a list of fields from an array.
+   * Get a field from a field id, if possible.
    *
-   * @param array $array
-   *   An array of field names.
+   * @param string $id
+   *   An id such as node.body.
+   *
+   * @return \Drupal\entity_inherit\EntityInheritField\EntityInheritFieldInterface
+   *   A field.
+   *
+   * @throws \Exception
+   */
+  public function fromId(string $id) : EntityInheritFieldInterface {
+    return $this->app->allFields()->filter([$id])->findById($id);
+  }
+
+  /**
+   * Get a field list from a Drupal field map.
+   *
+   * @param array $map
+   *   A field map as retrieved from the Drupal entityFieldManager's
+   *   getFieldMap() method.
    *
    * @return \Drupal\entity_inherit\EntityInheritField\EntityInheritFieldListInterface
    *   A field list.
    */
-  public function fromArray(array $array) : EntityInheritFieldListInterface {
+  public function fromMap(array $map) : EntityInheritFieldListInterface {
     $return = new EntityInheritFieldList();
-    foreach ($array as $field_name) {
-      if (trim($field_name)) {
-        $return->add($this->fromFieldName($field_name));
+    foreach ($map as $type => $fields) {
+      foreach ($fields as $name => $info) {
+        $field = new EntityInheritField($this->app, $type, $name, $info);
+        $return->add($field);
       }
     }
     return $return;
-  }
-
-  /**
-   * Create a field from a field name.
-   *
-   * @param string $field_name
-   *   A field name.
-   *
-   * @return \Drupal\entity_inherit\EntityInheritField\EntityInheritField
-   *   A field list.
-   */
-  public function fromFieldName(string $field_name) : EntityInheritField {
-    return new EntityInheritField($this->app, $field_name);
   }
 
 }

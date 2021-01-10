@@ -92,13 +92,15 @@ class EntityInheritDev {
     $this->assert($app->parentFieldFeedback()['severity'], 1, 'Severity is 1 because we have no fields.');
     $app->setParentEntityFields(['field_bla.']);
     $this->assert($app->parentFieldFeedback()['severity'], 2, 'Severity is 2 because the parent field does not exist.');
-    $app->setParentEntityFields(['field_bla', 'field_parents']);
+    $app->setParentEntityFields(['field_bla', 'node.field_parents']);
     $this->assert($app->parentFieldFeedback()['severity'], 2, 'Severity is 2 because one of the parent fields does not exist.');
     $app->setParentEntityFields(['field_parents']);
+    $this->assert($app->parentFieldFeedback()['severity'], 2, 'Severity is 2 because the parent field exists.');
+    $app->setParentEntityFields(['node.field_parents']);
     $this->assert($app->parentFieldFeedback()['severity'], 0, 'Severity is 0 because the parent field exists.');
     $first = $this->createNode('First Node', 'page');
     $second = $this->createNode('Second Node', 'page', [$first->id()]);
-    $this->assert(array_key_exists('body', $app->wrap($second)->inheritableFields()), TRUE, 'The body field is inheritable.');
+    $this->assert($app->wrap($second)->inheritableFields()->includes('node', 'body'), TRUE, 'The body field is inheritable.');
     $this->assert(1, count($app->wrap($second)->inheritableFields()), 'The body field is the only inheritable field.');
     $this->happyPath();
   }
@@ -237,7 +239,7 @@ class EntityInheritDev {
    *   Anything printable.
    */
   public function print($var) {
-    if (is_string($var)) {
+    if (is_string($var) || is_int($var) || is_bool($var)) {
       print($var . PHP_EOL);
     }
     else {

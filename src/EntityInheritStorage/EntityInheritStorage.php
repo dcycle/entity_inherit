@@ -44,11 +44,11 @@ class EntityInheritStorage implements EntityInheritStorageInterface {
    * Get all entities whose source field targets entity of specified type, id.
    *
    * @param string $source_field
-   *   An entity's source field such as 'field_parents'.
+   *   An entity's source field such as 'node.field_parents'.
    * @param string $target_type
-   *   An entity's target type such as 'node'.
+   *   An entity's target type such as 'node' or 'paragraph'.
    * @param string $target_id
-   *   An entity's target id such as '1'.
+   *   An entity's target id such as '1' or '24161'.
    *
    * @return array
    *   Array of Drupal entities.

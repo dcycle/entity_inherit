@@ -113,23 +113,11 @@ class EntityInherit {
   /**
    * Get all field names as an array of strings.
    *
-   * @param string $category
-   *   Arbitrary category which is then managed by plugins. "inheritable" and
-   *   "parent" can be used.
-   *
-   * @return array
+   * @return \Drupal\entity_inherit\EntityInheritField\EntityInheritFieldListInterface
    *   All field names.
    */
-  public function allFields(string $category) : array {
-    $return = [];
-    foreach ($this->entityFieldManager->getFieldMap() as $fields) {
-      foreach ($fields as $fieldname => $field) {
-        $return[$fieldname] = $field;
-      }
-    }
-    $original = $return;
-    $this->plugins()->filterFields($return, $original, $category, $this);
-    return $return;
+  public function allFields() : EntityInheritFieldListInterface {
+    return $this->fieldFactory()->fromMap($this->entityFieldManager->getFieldMap());
   }
 
   /**
@@ -141,13 +129,17 @@ class EntityInherit {
    *   A type such as "page".
    *
    * @return array
-   *   All field names for bundle.
+   *   All field names for bundle, such as [node.body => node.body, ...].
    */
   public function bundleFieldNames(string $type, string $bundle) : array {
     $candidates = $this->getFieldDefinitions($type, $bundle);
-    $filtered = $candidates;
 
-    $this->plugins()->filterFields($filtered, $candidates, 'inheritable', $this);
+    $filtered = [];
+    array_walk($candidates, function ($item, $key) use (&$filtered, $type) {
+      $filtered[$type . '.' . $key] = $type . '.' . $key;
+    });
+
+    $this->plugins()->filterFields($filtered, $filtered, 'inheritable', $this);
 
     return $filtered;
   }
@@ -190,6 +182,20 @@ class EntityInherit {
     }
 
     return $candidate;
+  }
+
+  /**
+   * Gets fields from the config store, allowing plugins to alter them.
+   *
+   * @return array
+   *   The fields.
+   */
+  public function configGetFields() : array {
+    $fields = $this->configGetArray('fields');
+
+    $this->plugins()->alterFields($fields, $this);
+
+    return $fields;
   }
 
   /**
@@ -293,19 +299,14 @@ class EntityInherit {
    * @param string $bundle
    *   An entity bundle.
    *
-   * @return array
-   *   Array of fields.
+   * @return \Drupal\entity_inherit\EntityInheritField\EntityInheritFieldListInterface
+   *   All inheritable fields for a type and bundle.
    */
-  public function inheritableFields($type, $bundle) : array {
-    $all_fields = $this->allFields('inheritable');
-    $my_fields = $this->getFieldDefinitions($type, $bundle);
-    $return = [];
-    foreach ($all_fields as $id => $candidate) {
-      if (array_key_exists($id, $my_fields)) {
-        $return[$id] = $candidate;
-      }
-    }
-    return $return;
+  public function inheritableFields($type, $bundle) : EntityInheritFieldListInterface {
+    return $this->allFields()
+      ->validOnly('inheritable')
+      ->filterByType([$type])
+      ->filterByName(array_keys($this->getFieldDefinitions($type, $bundle)));
   }
 
   /**
@@ -320,16 +321,16 @@ class EntityInherit {
   public function parentFieldFeedback() : array {
     $return = [
       'severity' => 2,
-      'translated_message' => 'coud not fetch field feedback',
+      'translated_message' => 'could not fetch field feedback',
     ];
     try {
-      $all_fields = $this->getParentEntityFields();
-      $valid = $all_fields->validOnly('parent');
-      $invalid = $all_fields->invalidOnly('parent');
+      $all_fields = $this->configGetFields();
+      $valid = $this->getParentEntityFields();
+      $invalid = array_diff($all_fields, $valid->toArray());
 
       if (count($invalid)) {
-        $return['translated_message'] = $this->formatPlural(count($invalid), 'The following field is invalid (either it does not exist or is not an entity reference field): @f', 'The following fields are invalid (either they do not exist or are not entity reference fields): @f', [
-          '@f' => implode(', ', $invalid->toArray()),
+        $return['translated_message'] = $this->formatPlural(count($invalid), 'The following field is invalid (either it does not exist, or it is not prefixed with the entity type, or is not an entity reference field): @f', 'The following fields are invalid (either they do not exist, or they are not prefixed with the entity type, or are not entity reference fields): @f', [
+          '@f' => implode(', ', $invalid),
         ]);
       }
       elseif (count($valid)) {
@@ -340,7 +341,7 @@ class EntityInherit {
       }
       else {
         $return['severity'] = 1;
-        $return['translated_message'] = $this->t("No fields are defined. For this module to work, you need to define at least one reference field which will be a parent's entity, then paste the field name here.");
+        $return['translated_message'] = $this->t("No fields are defined. For this module to work, you need to define at least one reference field which will be a parent's entity, then paste the field name here, making sure to prefix it with its entity type, for example 'node.field_parents'.");
       }
     }
     catch (\Throwable $t) {
@@ -377,7 +378,7 @@ class EntityInherit {
    * @return \Drupal\entity_inherit\EntityInheritField\EntityInheritFieldFactory
    *   A factory for a list of fields.
    */
-  public function entityFieldListFactory() : EntityInheritFieldFactory {
+  public function fieldFactory() : EntityInheritFieldFactory {
     return $this->singleton(EntityInheritFieldFactory::class);
   }
 
@@ -398,7 +399,7 @@ class EntityInherit {
    *   A list of fields where the parent entities are stored.
    */
   public function getParentEntityFields() : EntityInheritFieldListInterface {
-    return $this->entityFieldListFactory()->fromArray($this->configGetArray('fields'));
+    return $this->allFields()->filter($this->configGetFields());
   }
 
   /**
@@ -453,7 +454,7 @@ class EntityInherit {
   }
 
   /**
-   * Get all EntityInerit plugins.
+   * Get all EntityInherit plugins.
    *
    * See the modules included in the ./modules directory for an example on how
    * to create a plugin.
@@ -474,7 +475,13 @@ class EntityInherit {
    *   An array of field names.
    */
   public function setParentEntityFields(array $fields) {
-    $this->configFactory->getEditable('entity_inherit.general.settings')->set('fields', $fields)->save();
+    $trimmed = [];
+
+    array_walk($fields, function ($item, $key) use (&$trimmed) {
+      $trimmed[] = trim($item);
+    });
+
+    $this->configFactory->getEditable('entity_inherit.general.settings')->set('fields', $trimmed)->save();
   }
 
   /**
@@ -526,19 +533,6 @@ class EntityInherit {
   }
 
   /**
-   * Create a field list object.
-   *
-   * @param array $field_names
-   *   Field names.
-   *
-   * @return \Drupal\entity_inherit\EntityInheritField\EntityInheritFieldListInterface
-   *   A list of fields.
-   */
-  public function toFieldList(array $field_names) {
-    return $this->entityFieldListFactory()->fromArray($field_names);
-  }
-
-  /**
    * Display an error to the user.
    *
    * @param string $translated_message
@@ -582,6 +576,8 @@ class EntityInherit {
   /**
    * Whether or not a field name is a valid parent field.
    *
+   * @param string $entity_type
+   *   An entity type to which the field name belongs.
    * @param string $field_name
    *   A field name.
    * @param string $category
@@ -591,8 +587,16 @@ class EntityInherit {
    * @return bool
    *   Whether or not a field name is valid.
    */
-  public function validFieldName(string $field_name, string $category) : bool {
-    return in_array($field_name, array_keys($this->allFields($category)));
+  public function validFieldName(string $entity_type, string $field_name, string $category) : bool {
+    $field_id = $entity_type . '.' . $field_name;
+
+    $field_ids = [
+      $field_id => $field_id,
+    ];
+
+    $this->plugins()->filterFields($field_ids, $field_ids, $category, $this);
+
+    return array_key_exists($field_id, $field_ids);
   }
 
   /**

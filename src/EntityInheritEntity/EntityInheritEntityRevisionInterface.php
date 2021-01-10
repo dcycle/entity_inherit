@@ -20,13 +20,16 @@ interface EntityInheritEntityRevisionInterface {
   /**
    * Get all our fields which are candidates to be inherited.
    *
-   * @return array
-   *   Array of fields.
+   * @return \Drupal\entity_inherit\EntityInheritField\EntityInheritFieldListInterface
+   *   All inheritable fields for a type and bundle.
    */
-  public function inheritableFields() : array;
+  public function inheritableFields() : EntityInheritFieldListInterface;
 
   /**
    * Get a field value as an array.
+   *
+   * @param string $field_name
+   *   A field name such as node.body.
    *
    * @return array
    *   The field value, such as:

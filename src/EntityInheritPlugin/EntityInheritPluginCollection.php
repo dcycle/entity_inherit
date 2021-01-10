@@ -34,6 +34,16 @@ class EntityInheritPluginCollection implements EntityInheritPluginInterface, \Co
   /**
    * {@inheritdoc}
    */
+  public function alterFields(array &$field_names, EntityInherit $app) {
+    $this->callOnPlugins('alterFields', [
+      &$field_names,
+      $app,
+    ]);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function filterFields(array &$field_names, array $original, string $category, EntityInherit $app) {
     $this->callOnPlugins('filterFields', [
       &$field_names,

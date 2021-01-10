@@ -67,7 +67,7 @@ class EntityInheritExistingEntity extends EntityInheritEntity implements EntityI
     $return = $factory->newCollection();
     $original = $this->original();
 
-    foreach (array_keys($this->inheritableFields()) as $field_name) {
+    foreach ($this->inheritableFields()->toFieldNamesArray() as $field_name) {
       $return->add($factory->newFieldValue($field_name, $this->value($field_name), $original->value($field_name)));
     }
 

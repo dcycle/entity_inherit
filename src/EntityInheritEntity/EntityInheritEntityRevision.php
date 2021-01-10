@@ -3,6 +3,7 @@
 namespace Drupal\entity_inherit\EntityInheritEntity;
 
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\entity_inherit\EntityInherit;
 use Drupal\entity_inherit\EntityInheritFieldValue\EntityInheritFieldValueCollectionInterface;
 use Drupal\entity_inherit\EntityInheritFieldValue\EntityInheritFieldValue;
@@ -12,6 +13,8 @@ use Drupal\entity_inherit\EntityInheritField\EntityInheritFieldListInterface;
  * An entity or entity revision.
  */
 abstract class EntityInheritEntityRevision implements EntityInheritEntityRevisionInterface, EntityInheritReadableEntityInterface {
+
+  use StringTranslationTrait;
 
   /**
    * The injected app singleton.
@@ -118,7 +121,7 @@ abstract class EntityInheritEntityRevision implements EntityInheritEntityRevisio
   /**
    * {@inheritdoc}
    */
-  public function inheritableFields() : array {
+  public function inheritableFields() : EntityInheritFieldListInterface {
     return $this->app->inheritableFields($this->getType(), $this->getBundle());
   }
 
@@ -155,7 +158,21 @@ abstract class EntityInheritEntityRevision implements EntityInheritEntityRevisio
    * {@inheritdoc}
    */
   public function value(string $field_name) : array {
-    return $this->getDrupalEntity()->{$field_name}->getValue();
+    $return = [];
+    try {
+      $field = $this->app->fieldFactory()->fromId($field_name);
+      if ($field->entityType() == $this->type) {
+        // ::get() is not necessarily a method of the Drupal entity, but
+        // during normal operation it should always be, and if it is not an
+        // error is logged.
+        // @phpstan-ignore-next-line
+        return $this->getDrupalEntity()->get($field->fieldName())->getValue();
+      }
+    }
+    catch (\Throwable $t) {
+      $this->app->watchdogAndUserError($t, $this->t('Could not fetch field from entity.'));
+    }
+    return $return;
   }
 
 }

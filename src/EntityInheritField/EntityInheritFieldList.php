@@ -41,6 +41,75 @@ class EntityInheritFieldList implements EntityInheritFieldListInterface {
   /**
    * {@inheritdoc}
    */
+  public function filter(array $field_list) : EntityInheritFieldListInterface {
+    $return = new EntityInheritFieldList();
+
+    foreach ($this->array as $candidate) {
+      foreach ($field_list as $field_string) {
+        if (is_string($field_string) && $candidate->matchesString($field_string)) {
+          $return->add($candidate);
+        }
+      }
+    }
+
+    return $return;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function filterByType(array $entity_types) : EntityInheritFieldListInterface {
+    $return = new EntityInheritFieldList();
+
+    foreach ($this->array as $candidate) {
+      if (in_array($candidate->entityType(), $entity_types)) {
+        $return->add($candidate);
+      }
+    }
+
+    return $return;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function filterByName(array $names) : EntityInheritFieldListInterface {
+    $return = new EntityInheritFieldList();
+
+    foreach ($this->array as $candidate) {
+      if (in_array($candidate->fieldName(), $names)) {
+        $return->add($candidate);
+      }
+    }
+
+    return $return;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function findById(string $id) : EntityInheritFieldInterface {
+    if (array_key_exists($id, $this->array)) {
+      return $this->array[$id];
+    }
+    throw new \Exception('Could not find field with id ' . $id . ' in list.');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function includes(string $entity_type, string $field_name) : bool {
+    foreach ($this->array as $field) {
+      if ($field->matches($entity_type, $field_name)) {
+        return TRUE;
+      }
+    }
+    return FALSE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function invalidOnly(string $category) : EntityInheritFieldListInterface {
     $invalid = new EntityInheritFieldList();
 
@@ -58,6 +127,19 @@ class EntityInheritFieldList implements EntityInheritFieldListInterface {
    */
   public function toArray() : array {
     return $this->array;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function toFieldNamesArray() : array {
+    $return = [];
+
+    foreach ($this->array as $candidate) {
+      $return[$candidate->fieldName()] = $candidate->fieldName();
+    }
+
+    return $return;
   }
 
   /**
