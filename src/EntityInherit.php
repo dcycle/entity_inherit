@@ -195,7 +195,7 @@ class EntityInherit {
 
     $this->plugins()->alterFields($fields, $this);
 
-    return $fields;
+    return array_filter($fields);
   }
 
   /**
@@ -325,8 +325,8 @@ class EntityInherit {
     ];
     try {
       $all_fields = $this->configGetFields();
-      $valid = $this->getParentEntityFields();
-      $invalid = array_diff($all_fields, $valid->toArray());
+      $valid = array_keys($this->getParentEntityFields()->toArray());
+      $invalid = array_diff($all_fields, $valid);
 
       if (count($invalid)) {
         $return['translated_message'] = $this->formatPlural(count($invalid), 'The following field is invalid (either it does not exist, or it is not prefixed with the entity type, or is not an entity reference field): @f', 'The following fields are invalid (either they do not exist, or they are not prefixed with the entity type, or are not entity reference fields): @f', [

@@ -143,7 +143,7 @@ abstract class EntityInheritEntityRevision implements EntityInheritEntityRevisio
     $return = $this->app->getEntityFactory()->newCollection();
 
     foreach ($fields->toArray() as $field) {
-      if ($field_value = $this->getDrupalEntity()->{$field->__toString()}) {
+      if ($field_value = $this->value($field)) {
         $drupal_entities = $field_value->referencedEntities();
         foreach ($drupal_entities as $drupal_entity) {
           $return->add(new EntityInheritExistingEntity($drupal_entity->getEntityTypeId(), $drupal_entity->id(), $drupal_entity, $this->app));

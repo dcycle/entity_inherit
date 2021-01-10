@@ -95,13 +95,13 @@ class EntityInheritDev {
     $app->setParentEntityFields(['field_bla', 'node.field_parents']);
     $this->assert($app->parentFieldFeedback()['severity'], 2, 'Severity is 2 because one of the parent fields does not exist.');
     $app->setParentEntityFields(['field_parents']);
-    $this->assert($app->parentFieldFeedback()['severity'], 2, 'Severity is 2 because the parent field exists.');
+    $this->assert($app->parentFieldFeedback()['severity'], 0, 'Severity is 0 because the parent field exists.');
     $app->setParentEntityFields(['node.field_parents']);
     $this->assert($app->parentFieldFeedback()['severity'], 0, 'Severity is 0 because the parent field exists.');
     $first = $this->createNode('First Node', 'page');
     $second = $this->createNode('Second Node', 'page', [$first->id()]);
     $this->assert($app->wrap($second)->inheritableFields()->includes('node', 'body'), TRUE, 'The body field is inheritable.');
-    $this->assert(1, count($app->wrap($second)->inheritableFields()), 'The body field is the only inheritable field.');
+    $this->assert(count($app->wrap($second)->inheritableFields()), 2, 'The body field, along with field_parents, are the only inheritable fields.');
     $this->happyPath();
   }
 
