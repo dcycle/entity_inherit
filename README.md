@@ -1,5 +1,7 @@
 [![CircleCI](https://circleci.com/gh/dcycle/entity_inherit.svg?style=svg)](https://circleci.com/gh/dcycle/entity_inherit)
 
+**Warning, there is currently an [open critical issue](https://www.drupal.org/project/entity_inherit/issues/3193018) which makes this module not suitable for production sites.**
+
 Entity Inherit
 =====
 
