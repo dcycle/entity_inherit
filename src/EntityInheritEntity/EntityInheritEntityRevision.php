@@ -92,6 +92,35 @@ abstract class EntityInheritEntityRevision implements EntityInheritEntityRevisio
   }
 
   /**
+   * Retrieve a field object linked to a Drupal entity.
+   *
+   * @param string $field_name
+   *   A field name such as node.body.
+   *
+   * @return mixed
+   *   A Drupal field object, or NULL.
+   *
+   * @throws \Exception
+   */
+  public function getField(string $field_name) {
+    $return = NULL;
+    try {
+      $field = $this->app->fieldFactory()->fromId($field_name);
+      if ($field->entityType() == $this->type) {
+        // ::get() is not necessarily a method of the Drupal entity, but
+        // during normal operation it should always be, and if it is not an
+        // error is logged.
+        // @phpstan-ignore-next-line
+        return $this->getDrupalEntity()->get($field->fieldName())->getValue();
+      }
+    }
+    catch (\Throwable $t) {
+      $this->app->watchdogAndUserError($t, $this->t('Could not fetch field from entity.'));
+    }
+    return $return;
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function getType() : string {
@@ -143,8 +172,8 @@ abstract class EntityInheritEntityRevision implements EntityInheritEntityRevisio
     $return = $this->app->getEntityFactory()->newCollection();
 
     foreach ($fields->toArray() as $field) {
-      if ($field_value = $this->value($field)) {
-        $drupal_entities = $field_value->referencedEntities();
+      if ($field_object = $this->getField($field)) {
+        $drupal_entities = $field_object->referencedEntities();
         foreach ($drupal_entities as $drupal_entity) {
           $return->add(new EntityInheritExistingEntity($drupal_entity->getEntityTypeId(), $drupal_entity->id(), $drupal_entity, $this->app));
         }
@@ -158,21 +187,8 @@ abstract class EntityInheritEntityRevision implements EntityInheritEntityRevisio
    * {@inheritdoc}
    */
   public function value(string $field_name) : array {
-    $return = [];
-    try {
-      $field = $this->app->fieldFactory()->fromId($field_name);
-      if ($field->entityType() == $this->type) {
-        // ::get() is not necessarily a method of the Drupal entity, but
-        // during normal operation it should always be, and if it is not an
-        // error is logged.
-        // @phpstan-ignore-next-line
-        return $this->getDrupalEntity()->get($field->fieldName())->getValue();
-      }
-    }
-    catch (\Throwable $t) {
-      $this->app->watchdogAndUserError($t, $this->t('Could not fetch field from entity.'));
-    }
-    return $return;
+    $candidate = $this->getField($field_name);
+    return $candidate ? $candidate->getValue() : [];
   }
 
 }

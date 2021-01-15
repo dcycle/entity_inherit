@@ -209,6 +209,28 @@ class EntityInherit {
   }
 
   /**
+   * Given a field id like node.field_whatever, return [node,field_whatever].
+   *
+   * @param string $id
+   *   A field ID such as node.field_whatever.
+   *
+   * @return array
+   *   An array such as [node,field_whatever]. If that is not possible, throw
+   *   an exception.
+   *
+   * @throws \Exception
+   */
+  public function explodeFieldId(string $id) : array {
+    $parts = explode('.', $id);
+
+    if (count($parts) != 2 || $parts[0] || $parts[1]) {
+      throw new \Exception('A field ID should be in the format node.field_whatever.');
+    }
+
+    return $parts;
+  }
+
+  /**
    * Get the Entity factory.
    *
    * @return \Drupal\entity_inherit\EntityInheritEntity\EntityInheritEntityFactory

@@ -2,6 +2,7 @@
 
 namespace Drupal\entity_inherit\EntityInheritStorage;
 
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\entity_inherit\EntityInherit;
 use Drupal\entity_inherit\EntityInheritEntity\EntityInheritExistingMultipleEntitiesInterface;
 
@@ -9,6 +10,8 @@ use Drupal\entity_inherit\EntityInheritEntity\EntityInheritExistingMultipleEntit
  * Storage.
  */
 class EntityInheritStorage implements EntityInheritStorageInterface {
+
+  use StringTranslationTrait;
 
   /**
    * The app singleton.
@@ -43,7 +46,7 @@ class EntityInheritStorage implements EntityInheritStorageInterface {
   /**
    * Get all entities whose source field targets entity of specified type, id.
    *
-   * @param string $source_field
+   * @param string $source_field_id
    *   An entity's source field such as 'node.field_parents'.
    * @param string $target_type
    *   An entity's target type such as 'node' or 'paragraph'.
@@ -51,20 +54,29 @@ class EntityInheritStorage implements EntityInheritStorageInterface {
    *   An entity's target id such as '1' or '24161'.
    *
    * @return array
-   *   Array of Drupal entities.
+   *   Array of Drupal entities. In case of an error, we will log the error and
+   *   return an empty array.
    */
-  public function getReferencingEntities(string $source_field, string $target_type, string $target_id) : array {
-    print_r([
-      $source_field,
-      $target_type,
-      $target_id,
-    ]);
-    return $this->app->getEntityTypeManager()
-      ->getListBuilder($target_type)
-      ->getStorage()
-      ->loadByProperties([
-        $source_field => $target_id,
-      ]);
+  public function getReferencingEntities(string $source_field_id, string $target_type, string $target_id) : array {
+    $return = [];
+    try {
+      $source_type = $this->app->explodeFieldId($source_field_id)[0];
+      $source_field_name = $this->app->explodeFieldId($source_field_id)[1];
+
+      // All the Drupal entities we will return will necessarily be of type
+      // $source_type because fields cannot be shared between entities of
+      // different types.
+      $query = $this->app
+        ->getEntityTypeManager()
+        ->getStorage($source_type)
+        ->getQuery();
+      $query->condition($source_field_name . '.target_id', $target_id);
+      return $query->execute();
+    }
+    catch (\Throwable $t) {
+      $this->app->watchdogAndUserError($t, $this->t('Could not get referenceing entities.'));
+    }
+    return $return;
   }
 
 }
