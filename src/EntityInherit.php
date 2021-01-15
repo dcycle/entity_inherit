@@ -223,8 +223,8 @@ class EntityInherit {
   public function explodeFieldId(string $id) : array {
     $parts = explode('.', $id);
 
-    if (count($parts) != 2 || $parts[0] || $parts[1]) {
-      throw new \Exception('A field ID should be in the format node.field_whatever.');
+    if (count($parts) != 2 || !$parts[0] || !$parts[1]) {
+      throw new \Exception('A field ID should be in the format node.field_whatever, not ' . $id . '.');
     }
 
     return $parts;
@@ -657,7 +657,7 @@ class EntityInherit {
   public function watchdogThrowable(\Throwable $t, $message = '', $variables = [], $severity = RfcLogLevel::ERROR, $link = NULL) {
 
     $message .= $message ? ' ' : '';
-    $message .= '%type: @message in %function (line %line of %file).';
+    $message .= '%type: @message in %function (line %line of %file). @backtrace_string';
 
     if ($link) {
       $variables['link'] = $link;

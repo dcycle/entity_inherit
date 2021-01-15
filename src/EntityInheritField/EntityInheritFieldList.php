@@ -132,6 +132,19 @@ class EntityInheritFieldList implements EntityInheritFieldListInterface {
   /**
    * {@inheritdoc}
    */
+  public function toFieldIdsArray() : array {
+    $return = [];
+
+    foreach ($this->array as $candidate) {
+      $return[$candidate->__toString()] = $candidate->__toString();
+    }
+
+    return $return;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function toFieldNamesArray() : array {
     $return = [];
 

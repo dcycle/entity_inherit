@@ -111,7 +111,7 @@ abstract class EntityInheritEntityRevision implements EntityInheritEntityRevisio
         // during normal operation it should always be, and if it is not an
         // error is logged.
         // @phpstan-ignore-next-line
-        return $this->getDrupalEntity()->get($field->fieldName())->getValue();
+        return $this->getDrupalEntity()->get($field->fieldName());
       }
     }
     catch (\Throwable $t) {
