@@ -12,12 +12,13 @@ TRIES=15
 for i in `seq 1 "$TRIES"`;
 do
   OUTPUT=$(echo 'show databases'|{ mysql -h mysql -u root --password=drupal 2>&1 || true; })
-  # if [[ "$OUTPUT" == *"ERROR"* ]]; then
+  if [[ "$OUTPUT" == *"ERROR"* ]]; then
     echo "Try $i of $TRIES. MySQL container is not available yet. Should not be long..."
     sleep 2
-  # else
-  #   echo "MySQL is up! Moving on..."
-  # fi
+  else
+    echo "MySQL is up! Moving on..."
+    break;
+  fi
 done
 
 drush si -y --db-url "mysqli://root:drupal@mysql/drupal" standard
