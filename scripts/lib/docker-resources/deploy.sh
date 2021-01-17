@@ -8,7 +8,7 @@ set -e
 
 echo "Will try to connect to MySQL container until it is up. This can take up to 15 seconds if the container has just been spun up."
 OUTPUT="ERROR"
-TRIES=30
+TRIES=15
 for i in `seq 1 "$TRIES"`;
 do
   OUTPUT=$(echo 'show databases'|{ mysql -h mysql -u root --password=drupal 2>&1 || true; })
