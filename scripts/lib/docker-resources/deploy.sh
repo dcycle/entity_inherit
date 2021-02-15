@@ -9,7 +9,7 @@ set -e
 TRIES=20
 echo "Will try to connect to MySQL container until it is up. This can take up to $TRIES seconds if the container has just been spun up."
 OUTPUT="ERROR"
-for i in `seq 1 "$TRIES"`;
+for i in $(seq 1 "$TRIES");
 do
   OUTPUT=$(echo 'show databases'|{ mysql -h mysql -u root --password=drupal 2>&1 || true; })
   if [[ "$OUTPUT" == *"ERROR"* ]]; then
