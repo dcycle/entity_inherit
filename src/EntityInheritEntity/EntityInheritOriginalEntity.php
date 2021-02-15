@@ -4,6 +4,7 @@ namespace Drupal\entity_inherit\EntityInheritEntity;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\entity_inherit\EntityInherit;
+use Drupal\entity_inherit\EntityInheritField\EntityInheritFieldId;
 
 /**
  * An original entity.
@@ -33,7 +34,7 @@ class EntityInheritOriginalEntity extends EntityInheritEntityRevision {
   /**
    * {@inheritdoc}
    */
-  public function originalValue(string $field_name) : array {
+  public function originalValue(EntityInheritFieldId $field_name) : array {
     return [];
   }
 

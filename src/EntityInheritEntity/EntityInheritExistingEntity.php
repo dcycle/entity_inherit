@@ -5,6 +5,7 @@ namespace Drupal\entity_inherit\EntityInheritEntity;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\entity_inherit\EntityInherit;
+use Drupal\entity_inherit\EntityInheritField\EntityInheritFieldId;
 use Drupal\entity_inherit\EntityInheritFieldValue\EntityInheritFieldValue;
 use Drupal\entity_inherit\EntityInheritFieldValue\EntityInheritSingleFieldValueInterface;
 use Drupal\entity_inherit\EntityInheritFieldValue\EntityInheritFieldValueCollectionInterface;
@@ -68,7 +69,7 @@ class EntityInheritExistingEntity extends EntityInheritEntity implements EntityI
     $original = $this->original();
 
     foreach ($this->inheritableFields()->toFieldIdsArray() as $field_id) {
-      $return->add($factory->newFieldValue($field_name, $this->value($field_id), $original->value($field_id)));
+      $return->add($factory->newFieldValue($field_id, $this->value($field_id), $original->value($field_id)));
     }
 
     return $return;
@@ -125,7 +126,7 @@ class EntityInheritExistingEntity extends EntityInheritEntity implements EntityI
   /**
    * {@inheritdoc}
    */
-  public function originalValue(string $field_name) : array {
+  public function originalValue(EntityInheritFieldId $field_name) : array {
     return $this->original()->value($field_name);
   }
 

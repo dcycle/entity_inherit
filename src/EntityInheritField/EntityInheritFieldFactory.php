@@ -33,16 +33,16 @@ class EntityInheritFieldFactory {
   /**
    * Get a field from a field id, if possible.
    *
-   * @param string $id
-   *   An id such as node.body.
+   * @param \Drupal\entity_inherit\EntityInheritField\EntityInheritFieldId $id
+   *   An id such.
    *
    * @return \Drupal\entity_inherit\EntityInheritField\EntityInheritFieldInterface
    *   A field.
    *
    * @throws \Exception
    */
-  public function fromId(string $id) : EntityInheritFieldInterface {
-    return $this->app->allFields()->filter([$id])->findById($id);
+  public function fromId(EntityInheritFieldId $id) : EntityInheritFieldInterface {
+    return $this->app->allFields()->filter([$id->uniqueId()])->findById($id->uniqueId());
   }
 
   /**

@@ -197,11 +197,12 @@ class EntityInheritDev {
    */
   public function createNode(string $title, string $type, array $parents = [], array $other = []) {
     $this->print('Creating node ' . $title);
-    $node = Node::create([
+    $node_create_array = [
       'type' => $type,
       'title' => $title,
       'field_parents' => $this->formatParents($parents),
-    ] + $other);
+    ] + $other;
+    $node = Node::create($node_create_array);
     $node->save();
     return $node;
   }

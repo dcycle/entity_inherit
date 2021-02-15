@@ -5,6 +5,7 @@ namespace Drupal\entity_inherit\EntityInheritEntity;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\entity_inherit\EntityInherit;
+use Drupal\entity_inherit\EntityInheritField\EntityInheritFieldId;
 use Drupal\entity_inherit\EntityInheritFieldValue\EntityInheritFieldValueCollectionInterface;
 use Drupal\entity_inherit\EntityInheritFieldValue\EntityInheritFieldValue;
 use Drupal\entity_inherit\EntityInheritField\EntityInheritFieldListInterface;
@@ -94,15 +95,15 @@ abstract class EntityInheritEntityRevision implements EntityInheritEntityRevisio
   /**
    * Retrieve a field object linked to a Drupal entity.
    *
-   * @param string $field_name
-   *   A field name such as node.body.
+   * @param \Drupal\entity_inherit\EntityInheritField\EntityInheritFieldId $field_name
+   *   A field name.
    *
    * @return mixed
    *   A Drupal field object, or NULL.
    *
    * @throws \Exception
    */
-  public function getField(string $field_name) {
+  public function getField(EntityInheritFieldId $field_name) {
     $return = NULL;
     try {
       $field = $this->app->fieldFactory()->fromId($field_name);
@@ -143,8 +144,8 @@ abstract class EntityInheritEntityRevision implements EntityInheritEntityRevisio
   /**
    * {@inheritdoc}
    */
-  public function hasField(string $field) : bool {
-    return array_key_exists($field, $this->allFieldNames());
+  public function hasField(EntityInheritFieldId $field) : bool {
+    return array_key_exists($field->uniqueId(), $this->allFieldNames());
   }
 
   /**
@@ -157,13 +158,13 @@ abstract class EntityInheritEntityRevision implements EntityInheritEntityRevisio
   /**
    * Get the original value of a field.
    *
-   * @param string $field_name
+   * @param \Drupal\entity_inherit\EntityInheritField\EntityInheritFieldId $field_name
    *   A field.
    *
    * @return array
    *   An original value.
    */
-  abstract public function originalValue(string $field_name) : array;
+  abstract public function originalValue(EntityInheritFieldId $field_name) : array;
 
   /**
    * {@inheritdoc}
@@ -186,7 +187,7 @@ abstract class EntityInheritEntityRevision implements EntityInheritEntityRevisio
   /**
    * {@inheritdoc}
    */
-  public function value(string $field_name) : array {
+  public function value(EntityInheritFieldId $field_name) : array {
     $candidate = $this->getField($field_name);
     return $candidate ? $candidate->getValue() : [];
   }
