@@ -112,7 +112,7 @@ abstract class EntityInheritEntityRevision implements EntityInheritEntityRevisio
         // during normal operation it should always be, and if it is not an
         // error is logged.
         // @phpstan-ignore-next-line
-        return $this->getDrupalEntity()->get($field->fieldName());
+        return $this->getDrupalEntity()->get($field->fieldName()->fieldName($this->getDrupalEntity()));
       }
     }
     catch (\Throwable $t) {
@@ -173,7 +173,7 @@ abstract class EntityInheritEntityRevision implements EntityInheritEntityRevisio
     $return = $this->app->getEntityFactory()->newCollection();
 
     foreach ($fields->toArray() as $field) {
-      if ($field_object = $this->getField($field)) {
+      if ($field_object = $this->getField($field->fieldName())) {
         $drupal_entities = $field_object->referencedEntities();
         foreach ($drupal_entities as $drupal_entity) {
           $return->add(new EntityInheritExistingEntity($drupal_entity->getEntityTypeId(), $drupal_entity->id(), $drupal_entity, $this->app));

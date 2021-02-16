@@ -59,7 +59,7 @@ class EntityInheritFieldFactory {
     $return = new EntityInheritFieldList();
     foreach ($map as $type => $fields) {
       foreach ($fields as $name => $info) {
-        $field = new EntityInheritField($this->app, $type, $name, $info);
+        $field = new EntityInheritField($this->app, $type, new EntityInheritFieldId($type, $name), $info);
         $return->add($field);
       }
     }

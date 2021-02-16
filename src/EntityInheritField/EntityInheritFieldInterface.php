@@ -2,6 +2,8 @@
 
 namespace Drupal\entity_inherit\EntityInheritField;
 
+use Drupal\entity_inherit\EntityInheritField\EntityInheritFieldId;
+
 /**
  * Reprensents a Drupal field.
  */
@@ -26,10 +28,10 @@ interface EntityInheritFieldInterface {
   /**
    * Get the field name.
    *
-   * @return string
+   * @return \Drupal\entity_inherit\EntityInheritField\EntityInheritFieldId
    *   The field name.
    */
-  public function fieldName() : string;
+  public function fieldName() : EntityInheritFieldId;
 
   /**
    * Check if this field matches an entity type and name.

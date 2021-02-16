@@ -18,6 +18,7 @@ use Drupal\entity_inherit\EntityInheritEntity\EntityInheritEntityFactory;
 use Drupal\entity_inherit\EntityInheritEntity\EntityInheritEntitySingleInterface;
 use Drupal\entity_inherit\EntityInheritEntity\EntityInheritSingleExistingEntityInterface;
 use Drupal\entity_inherit\EntityInheritField\EntityInheritFieldFactory;
+use Drupal\entity_inherit\EntityInheritField\EntityInheritFieldId;
 use Drupal\entity_inherit\EntityInheritField\EntityInheritFieldListInterface;
 use Drupal\entity_inherit\EntityInheritFieldValue\EntityInheritFieldValueFactory;
 use Drupal\entity_inherit\EntityInheritPlugin\EntityInheritPluginCollection;
@@ -325,6 +326,7 @@ class EntityInherit {
    *   All inheritable fields for a type and bundle.
    */
   public function inheritableFields($type, $bundle) : EntityInheritFieldListInterface {
+    print_r([$type, $bundle]);
     return $this->allFields()
       ->validOnly('inheritable')
       ->filterByType([$type])
@@ -598,9 +600,7 @@ class EntityInherit {
   /**
    * Whether or not a field name is a valid parent field.
    *
-   * @param string $entity_type
-   *   An entity type to which the field name belongs.
-   * @param string $field_name
+   * @param \Drupal\entity_inherit\EntityInheritField\EntityInheritFieldId $field_name
    *   A field name.
    * @param string $category
    *   Arbitrary category which is then managed by plugins. "inheritable" and
@@ -609,8 +609,8 @@ class EntityInherit {
    * @return bool
    *   Whether or not a field name is valid.
    */
-  public function validFieldName(string $entity_type, string $field_name, string $category) : bool {
-    $field_id = $entity_type . '.' . $field_name;
+  public function validFieldName(EntityInheritFieldId $field_name, string $category) : bool {
+    $field_id = $field_name->uniqueId();
 
     $field_ids = [
       $field_id => $field_id,

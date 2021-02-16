@@ -4,6 +4,8 @@ namespace Drupal\entity_inherit\EntityInheritField;
 
 use Drupal\entity_inherit\EntityInherit;
 
+use Drupal\entity_inherit\EntityInheritField\EntityInheritFieldId;
+
 /**
  * Reprensents a Drupal field.
  */
@@ -26,7 +28,7 @@ class EntityInheritField implements EntityInheritFieldInterface {
   /**
    * The field name.
    *
-   * @var string
+   * @var \Drupal\entity_inherit\EntityInheritField\EntityInheritFieldId
    */
   protected $fieldName;
 
@@ -44,15 +46,15 @@ class EntityInheritField implements EntityInheritFieldInterface {
    *   The global app singleton.
    * @param string $entity_type
    *   Each field can only exist on a single entity type such as 'node'.
-   * @param string $field_name
+   * @param \Drupal\entity_inherit\EntityInheritField\EntityInheritFieldId $field_name
    *   A field name.
    * @param array $field_info
    *   A field info array from Drupal's field map.
    */
-  public function __construct(EntityInherit $app, string $entity_type, string $field_name, array $field_info) {
+  public function __construct(EntityInherit $app, string $entity_type, EntityInheritFieldId $field_name, array $field_info) {
     $this->app = $app;
     $this->entityType = $entity_type;
-    $this->fieldName = trim($field_name);
+    $this->fieldName = $field_name;
     $this->fieldInfo = $field_info;
   }
 
@@ -60,7 +62,7 @@ class EntityInheritField implements EntityInheritFieldInterface {
    * {@inheritdoc}
    */
   public function __toString() {
-    return $this->entityType . '.' . $this->fieldName;
+    return $this->fieldName->uniqueId();
   }
 
   /**
@@ -73,7 +75,7 @@ class EntityInheritField implements EntityInheritFieldInterface {
   /**
    * {@inheritdoc}
    */
-  public function fieldName() : string {
+  public function fieldName() : EntityInheritFieldId {
     return $this->fieldName;
   }
 
@@ -81,7 +83,7 @@ class EntityInheritField implements EntityInheritFieldInterface {
    * {@inheritdoc}
    */
   public function matches(string $entity_type, string $field_name) : bool {
-    return $this->fieldName == $field_name && $this->entityType == $entity_type;
+    return $this->fieldName->matches($entity_type, $field_name);
   }
 
   /**
@@ -101,14 +103,14 @@ class EntityInheritField implements EntityInheritFieldInterface {
    * {@inheritdoc}
    */
   public function validInheritable() : bool {
-    return $this->app->validFieldName($this->entityType, $this->fieldName, 'inheritable');
+    return $this->app->validFieldName($this->fieldName, 'inheritable');
   }
 
   /**
    * {@inheritdoc}
    */
   public function valid(string $category) : bool {
-    return $this->app->validFieldName($this->entityType, $this->fieldName, $category);
+    return $this->app->validFieldName($this->fieldName, $category);
   }
 
 }

@@ -57,6 +57,21 @@ class EntityInheritFieldId {
   }
 
   /**
+   * Check whether this field matches an entity type/name combination.
+   *
+   * @param string $entity_type
+   *   An entity type such as node.
+   * @param string $field_name
+   *   A field name such as field_parents or body.
+   *
+   * @return bool
+   *   TRUE if matches.
+   */
+  public function matches(string $entity_type, string $field_name) {
+    return $this->field_name == $field_name && $this->entity_type == $entity_type;
+  }
+
+  /**
    * Return a unique ID for this field id as a string.
    *
    * @return string
