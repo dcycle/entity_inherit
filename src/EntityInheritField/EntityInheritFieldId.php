@@ -2,8 +2,6 @@
 
 namespace Drupal\entity_inherit\EntityInheritField;
 
-use Drupal\Core\Entity\EntityInterface;
-
 /**
  * Reprensents a Drupal field ID.
  */
@@ -14,14 +12,14 @@ class EntityInheritFieldId {
    *
    * @var string
    */
-  protected $entity_type;
+  protected $entityType;
 
   /**
    * A field name such as field_parents or body.
    *
    * @var string
    */
-  protected $field_name;
+  protected $fieldName;
 
   /**
    * Constructor.
@@ -32,15 +30,24 @@ class EntityInheritFieldId {
    *   A field name such as field_parents or body.
    */
   public function __construct(string $entity_type, string $field_name) {
-    $this->entity_type = $entity_type;
-    $this->field_name = $field_name;
+    foreach ([
+      'entity type' => $entity_type,
+      'field name' => $field_name,
+    ] as $type => $var) {
+      if (strpos($var, '.') !== FALSE) {
+        throw new \Exception($var . ' is not a valid ' . $type);
+      }
+    }
+    $this->entityType = $entity_type;
+    $this->fieldName = $field_name;
   }
 
   /**
    * Get the field name.
    *
-   * @param \Drupal\Core\Entity\EntityInterface $entity
-   *   A Drupal entity. Used to confirm that the
+   * @param \Drupal\Core\Entity\FieldableEntityInterface|null $entity
+   *   A Drupal entity. Used to confirm that the field is compatible with that
+   *   entity. If NULL, then we don't check.
    *
    * @return string
    *   A field name.
@@ -49,11 +56,11 @@ class EntityInheritFieldId {
    *   An exception is thrown if the entity is not compatible with this
    *   field id.
    */
-  public function fieldName(EntityInterface $entity) : string {
-    if ($entity->getEntityTypeId() != $this->entity_type) {
-      throw new \Exception('An entity of type ' . $entity->getEntityTypeId() . ' cannot have a field of type ' . $this->entity_type);
+  public function fieldName($entity = NULL) : string {
+    if ($entity && $entity->getEntityTypeId() != $this->entityType) {
+      throw new \Exception('An entity of type ' . $entity->getEntityTypeId() . ' cannot have a field of type ' . $this->entityType);
     }
-    return $this->field_name;
+    return $this->fieldName;
   }
 
   /**
@@ -68,7 +75,7 @@ class EntityInheritFieldId {
    *   TRUE if matches.
    */
   public function matches(string $entity_type, string $field_name) {
-    return $this->field_name == $field_name && $this->entity_type == $entity_type;
+    return $this->fieldName == $field_name && $this->entityType == $entity_type;
   }
 
   /**
@@ -78,7 +85,7 @@ class EntityInheritFieldId {
    *   A unique ID such as "node.body".
    */
   public function uniqueId() : string {
-    return $this->entity_type . '.' . $this->field_name;
+    return $this->entityType . '.' . $this->fieldName;
   }
 
 }

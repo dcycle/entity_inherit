@@ -2,7 +2,7 @@
 
 namespace Drupal\entity_inherit\EntityInheritEntity;
 
-use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\entity_inherit\EntityInherit;
 use Drupal\entity_inherit\EntityInheritField\EntityInheritFieldId;
@@ -31,7 +31,7 @@ class EntityInheritExistingEntity extends EntityInheritEntity implements EntityI
    *   The Drupal entity type such as "node".
    * @param string $id
    *   The Drupal entity id such as 1.
-   * @param null|\Drupal\Core\Entity\EntityInterface $entity
+   * @param null|\Drupal\Core\Entity\FieldableEntityInterface $entity
    *   The Drupal entity object, or NULL if we don't have it.
    * @param \Drupal\entity_inherit\EntityInherit $app
    *   The global app.
@@ -78,7 +78,7 @@ class EntityInheritExistingEntity extends EntityInheritEntity implements EntityI
   /**
    * {@inheritdoc}
    */
-  public function getDrupalEntity() : EntityInterface {
+  public function getDrupalEntity() : FieldableEntityInterface {
     if ($this->drupalEntity === NULL) {
       $this->drupalEntity = $this->app->getEntityTypeManager()->getStorage($this->type)->load($this->id);
     }
@@ -146,7 +146,7 @@ class EntityInheritExistingEntity extends EntityInheritEntity implements EntityI
 
     foreach ($parent['original'] as $field => $original_value) {
       if (array_key_exists($field, $parent['changed']) && $parent['changed'][$field] != $parent['original'][$field]) {
-        $fieldvalue = new EntityInheritFieldValue($this->app, $field, $parent['changed'][$field], $parent['original'][$field]);
+        $fieldvalue = new EntityInheritFieldValue($this->app, new EntityInheritFieldId(explode('.', $field)[0], explode('.', $field)[1]), $parent['changed'][$field], $parent['original'][$field]);
         $this->updateField($fieldvalue);
       }
     }

@@ -5,6 +5,7 @@ namespace Drupal\entity_inherit;
 use Drupal\Core\Entity\ContentEntityType;
 use Drupal\Core\Entity\EntityFieldManager;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Entity\EntityTypeManager;
 use Drupal\Core\Logger\LoggerChannelFactory;
 use Drupal\Core\Logger\RfcLogLevel;
@@ -270,7 +271,9 @@ class EntityInherit {
    *   An entity bundle.
    *
    * @return array
-   *   Field definitions, or an empty array if not possible.
+   *   Field definitions, or an empty array if not possible. Field definitions
+   *   are keyed by field name, for example field_x (which might be different
+   *   for the requested type than for other types).
    */
   public function getFieldDefinitions(string $type, string $bundle) : array {
     $type_definitions = $this->getEntityTypeManager()->getDefinitions();
@@ -430,9 +433,11 @@ class EntityInherit {
    */
   public function hookPresave(EntityInterface $entity) {
     try {
-      $wrapped_entity = $this->wrap($entity);
-      $wrapped_entity->presave();
-      $this->plugins()->presave($wrapped_entity, $this);
+      if (is_a($entity, FieldableEntityInterface::class)) {
+        $wrapped_entity = $this->wrap($entity);
+        $wrapped_entity->presave();
+        $this->plugins()->presave($wrapped_entity, $this);
+      }
     }
     catch (\Throwable $t) {
       $this->watchdogAndUserError($t, $this->t('Entity Inherit encountered an error.'));
@@ -673,13 +678,13 @@ class EntityInherit {
    * This entity can be in the process of creation, i.e. not have an id and
    * not exist in the database.
    *
-   * @param \Drupal\Core\Entity\EntityInterface $entity
+   * @param \Drupal\Core\Entity\FieldableEntityInterface $entity
    *   A Drupal entity.
    *
    * @return \Drupal\entity_inherit\EntityInheritEntity\EntityInheritEntitySingleInterface
    *   Our wrapper around a Drupal entity.
    */
-  public function wrap(EntityInterface $entity) : EntityInheritEntitySingleInterface {
+  public function wrap(FieldableEntityInterface $entity) : EntityInheritEntitySingleInterface {
     return $this->getEntityFactory()->fromEntity($entity);
   }
 
@@ -688,13 +693,13 @@ class EntityInherit {
    *
    * This entity must exist in the database.
    *
-   * @param \Drupal\Core\Entity\EntityInterface $entity
+   * @param \Drupal\Core\Entity\FieldableEntityInterface $entity
    *   A Drupal entity.
    *
    * @return \Drupal\entity_inherit\EntityInheritEntity\EntityInheritSingleExistingEntityInterface
    *   Our wrapper around a Drupal entity.
    */
-  public function wrapExisting(EntityInterface $entity) : EntityInheritSingleExistingEntityInterface {
+  public function wrapExisting(FieldableEntityInterface $entity) : EntityInheritSingleExistingEntityInterface {
     return $this->getEntityFactory()->fromExistingEntity($entity);
   }
 

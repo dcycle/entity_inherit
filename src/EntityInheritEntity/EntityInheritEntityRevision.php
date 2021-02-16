@@ -2,7 +2,7 @@
 
 namespace Drupal\entity_inherit\EntityInheritEntity;
 
-use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\entity_inherit\EntityInherit;
 use Drupal\entity_inherit\EntityInheritField\EntityInheritFieldId;
@@ -27,7 +27,7 @@ abstract class EntityInheritEntityRevision implements EntityInheritEntityRevisio
   /**
    * The Drupal entity.
    *
-   * @var \Drupal\Core\Entity\EntityInterface
+   * @var \Drupal\Core\Entity\FieldableEntityInterface
    */
   protected $drupalEntity;
 
@@ -43,7 +43,7 @@ abstract class EntityInheritEntityRevision implements EntityInheritEntityRevisio
    *
    * @param string $type
    *   The Drupal entity type such as "node".
-   * @param null|\Drupal\Core\Entity\EntityInterface $entity
+   * @param null|\Drupal\Core\Entity\FieldableEntityInterface $entity
    *   The Drupal entity object, or NULL if we don't have it.
    * @param \Drupal\entity_inherit\EntityInherit $app
    *   The global app.
@@ -67,10 +67,10 @@ abstract class EntityInheritEntityRevision implements EntityInheritEntityRevisio
   /**
    * Get the Drupal entity.
    *
-   * @return \Drupal\Core\Entity\EntityInterface
+   * @return \Drupal\Core\Entity\FieldableEntityInterface
    *   This Drupal entity.
    */
-  abstract public function getDrupalEntity() : EntityInterface;
+  abstract public function getDrupalEntity() : FieldableEntityInterface;
 
   /**
    * {@inheritdoc}
@@ -108,10 +108,9 @@ abstract class EntityInheritEntityRevision implements EntityInheritEntityRevisio
     try {
       $field = $this->app->fieldFactory()->fromId($field_name);
       if ($field->entityType() == $this->type) {
-        // ::get() is not necessarily a method of the Drupal entity, but
-        // during normal operation it should always be, and if it is not an
-        // error is logged.
-        // @phpstan-ignore-next-line
+        if (!$this->getDrupalEntity()->hasField($field->fieldName()->fieldName())) {
+          return NULL;
+        }
         return $this->getDrupalEntity()->get($field->fieldName()->fieldName($this->getDrupalEntity()));
       }
     }

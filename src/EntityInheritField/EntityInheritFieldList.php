@@ -77,7 +77,7 @@ class EntityInheritFieldList implements EntityInheritFieldListInterface {
     $return = new EntityInheritFieldList();
 
     foreach ($this->array as $candidate) {
-      if (in_array($candidate->fieldName()->uniqueId(), $names)) {
+      if (in_array($candidate->fieldName()->fieldName(), $names)) {
         $return->add($candidate);
       }
     }
@@ -136,7 +136,7 @@ class EntityInheritFieldList implements EntityInheritFieldListInterface {
     $return = [];
 
     foreach ($this->array as $candidate) {
-      $return[$candidate->__toString()] = $candidate->__toString();
+      $return[$candidate->__toString()] = $candidate->fieldName();
     }
 
     return $return;

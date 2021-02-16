@@ -3,7 +3,7 @@
 namespace Drupal\entity_inherit\EntityInheritDev;
 
 use Drupal\node\Entity\Node;
-use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\entity_inherit\EntityInherit;
 use Drupal\entity_inherit\Utilities\FriendTrait;
 
@@ -60,14 +60,14 @@ class EntityInheritDev {
   /**
    * Make sure a node's body value is as expected.
    *
-   * @param \Drupal\Core\Entity\EntityInterface $node
+   * @param \Drupal\Core\Entity\FieldableEntityInterface $node
    *   A Drupal node.
    * @param string $value
    *   An expected value.
    * @param string $message
    *   An assertion message.
    */
-  public function assertBodyValue(EntityInterface $node, string $value, string $message) {
+  public function assertBodyValue(FieldableEntityInterface $node, string $value, string $message) {
     $expected = $value ? [
       [
         'value' => $value,
@@ -76,8 +76,6 @@ class EntityInheritDev {
       ],
     ] : [];
 
-    // See https://github.com/mglaman/phpstan-drupal/issues/159.
-    // @phpstan-ignore-next-line
     $this->assert($node->get('body')->getValue(), $expected, 'body value of node ' . $node->id() . ' is ' . serialize($expected) . ': ' . $message);
   }
 
@@ -129,8 +127,6 @@ class EntityInheritDev {
     $this->print('Existing child gets new parent');
     $child3 = $this->createNode('Child saved once, then resaved with parent', 'page');
     $this->assertBodyValue($child3, '', 'Body is empty, child was just saved with no parent.');
-    // See https://github.com/mglaman/phpstan-drupal/issues/159.
-    // @phpstan-ignore-next-line
     $child3->set('field_parents', $parent->id());
     $child3->save();
     $this->assertBodyValue($child3, 'Hello', 'Body is set when existing node is saved with a new parent.');
@@ -138,11 +134,7 @@ class EntityInheritDev {
     $this->print('Existing child gets new parent which should not override its body field');
     $child4 = $this->createNode('Child saved once, then resaved with parent', 'page');
     $this->assertBodyValue($child4, '', 'Body is empty, child was just saved with no parent.');
-    // See https://github.com/mglaman/phpstan-drupal/issues/159.
-    // @phpstan-ignore-next-line
     $child4->set('field_parents', $parent->id());
-    // See https://github.com/mglaman/phpstan-drupal/issues/159.
-    // @phpstan-ignore-next-line
     $child4->set('body', [
       'value' => 'Hi',
       'format' => 'full_html',
@@ -151,8 +143,6 @@ class EntityInheritDev {
     $this->assertBodyValue($child4, 'Hi', 'Body is not inherited from new parent because it already contains a value.');
 
     $this->print('Parent changes; child should change as well.');
-    // See https://github.com/mglaman/phpstan-drupal/issues/159.
-    // @phpstan-ignore-next-line
     $parent->set('body', [
       'value' => 'Changed in parent, should propagate to child.',
       'format' => 'full_html',
@@ -166,8 +156,6 @@ class EntityInheritDev {
       'value' => 'Hi there!',
       'format' => 'full_html',
     ]);
-    // See https://github.com/mglaman/phpstan-drupal/issues/159.
-    // @phpstan-ignore-next-line
     $parent->set('body', [
       'value' => "Whats up?",
       'format' => 'full_html',
@@ -192,7 +180,7 @@ class EntityInheritDev {
    * @param array $other
    *   Other information to add to the new node.
    *
-   * @return \Drupal\Core\Entity\EntityInterface
+   * @return \Drupal\Core\Entity\FieldableEntityInterface
    *   A resulting entity.
    */
   public function createNode(string $title, string $type, array $parents = [], array $other = []) {

@@ -4,8 +4,6 @@ namespace Drupal\entity_inherit\EntityInheritField;
 
 use Drupal\entity_inherit\EntityInherit;
 
-use Drupal\entity_inherit\EntityInheritField\EntityInheritFieldId;
-
 /**
  * Reprensents a Drupal field.
  */

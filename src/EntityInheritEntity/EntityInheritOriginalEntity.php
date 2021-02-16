@@ -2,7 +2,7 @@
 
 namespace Drupal\entity_inherit\EntityInheritEntity;
 
-use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\entity_inherit\EntityInherit;
 use Drupal\entity_inherit\EntityInheritField\EntityInheritFieldId;
 
@@ -14,12 +14,12 @@ class EntityInheritOriginalEntity extends EntityInheritEntityRevision {
   /**
    * Constructor.
    *
-   * @param \Drupal\Core\Entity\EntityInterface $entity
+   * @param \Drupal\Core\Entity\FieldableEntityInterface $entity
    *   A Drupal entity.
    * @param \Drupal\entity_inherit\EntityInherit $app
    *   The global app.
    */
-  public function __construct(EntityInterface $entity, EntityInherit $app) {
+  public function __construct(FieldableEntityInterface $entity, EntityInherit $app) {
     $this->drupalEntity = $entity;
     parent::__construct($entity->getEntityTypeId(), $entity, $app);
   }
@@ -27,7 +27,7 @@ class EntityInheritOriginalEntity extends EntityInheritEntityRevision {
   /**
    * {@inheritdoc}
    */
-  public function getDrupalEntity() : EntityInterface {
+  public function getDrupalEntity() : FieldableEntityInterface {
     return $this->drupalEntity;
   }
 

@@ -98,7 +98,7 @@ interface EntityInheritFieldListInterface extends \Countable {
    * Get as array of ids.
    *
    * @return array
-   *   Array of ids, for example [node.field_x, node.field_y].
+   *   Array of EntityInheritFieldId objects.
    */
   public function toFieldIdsArray() : array;
 
