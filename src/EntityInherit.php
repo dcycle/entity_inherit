@@ -326,7 +326,6 @@ class EntityInherit {
    *   All inheritable fields for a type and bundle.
    */
   public function inheritableFields($type, $bundle) : EntityInheritFieldListInterface {
-    print_r([$type, $bundle]);
     return $this->allFields()
       ->validOnly('inheritable')
       ->filterByType([$type])

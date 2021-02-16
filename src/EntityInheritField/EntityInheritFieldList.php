@@ -76,10 +76,8 @@ class EntityInheritFieldList implements EntityInheritFieldListInterface {
   public function filterByName(array $names) : EntityInheritFieldListInterface {
     $return = new EntityInheritFieldList();
 
-bla
-
     foreach ($this->array as $candidate) {
-      if (in_array($candidate->fieldName(), $names)) {
+      if (in_array($candidate->fieldName()->uniqueId(), $names)) {
         $return->add($candidate);
       }
     }
