@@ -2,7 +2,6 @@
 
 namespace Drupal\entity_inherit\EntityInheritEntity;
 
-use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\entity_inherit\EntityInherit;
 use Drupal\entity_inherit\EntityInheritField\EntityInheritFieldId;
@@ -67,10 +66,10 @@ abstract class EntityInheritEntityRevision implements EntityInheritEntityRevisio
   /**
    * Get the Drupal entity.
    *
-   * @return \Drupal\Core\Entity\FieldableEntityInterface
+   * @return \Drupal\Core\Entity\FieldableEntityInterface|null
    *   This Drupal entity.
    */
-  abstract public function getDrupalEntity() : FieldableEntityInterface;
+  abstract public function getDrupalEntity();
 
   /**
    * {@inheritdoc}

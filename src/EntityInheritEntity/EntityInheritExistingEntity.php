@@ -78,9 +78,13 @@ class EntityInheritExistingEntity extends EntityInheritEntity implements EntityI
   /**
    * {@inheritdoc}
    */
-  public function getDrupalEntity() : FieldableEntityInterface {
+  public function getDrupalEntity() {
     if ($this->drupalEntity === NULL) {
-      $this->drupalEntity = $this->app->getEntityTypeManager()->getStorage($this->type)->load($this->id);
+      $candidate = $this->app->getEntityTypeManager()->getStorage($this->type)->load($this->id);
+
+      if ($candidate && is_a($candidate, FieldableEntityInterface::class)) {
+        $this->drupalEntity = $candidate;
+      }
     }
     if ($this->drupalEntity === NULL) {
       throw new \Exception('Cannot create entity of type ' . $this->type . ' with id ' . $this->id);

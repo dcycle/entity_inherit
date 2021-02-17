@@ -27,7 +27,7 @@ class EntityInheritOriginalEntity extends EntityInheritEntityRevision {
   /**
    * {@inheritdoc}
    */
-  public function getDrupalEntity() : FieldableEntityInterface {
+  public function getDrupalEntity() {
     return $this->drupalEntity;
   }
 
