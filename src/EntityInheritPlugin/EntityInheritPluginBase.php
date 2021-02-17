@@ -17,6 +17,11 @@ abstract class EntityInheritPluginBase extends PluginBase implements EntityInher
   /**
    * {@inheritdoc}
    */
+  public function alterFields(array &$field_names, EntityInherit $app) {}
+
+  /**
+   * {@inheritdoc}
+   */
   public function filterFields(array &$field_names, array $original, string $category, EntityInherit $app) {}
 
   /**

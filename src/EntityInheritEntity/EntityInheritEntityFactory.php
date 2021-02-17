@@ -2,7 +2,7 @@
 
 namespace Drupal\entity_inherit\EntityInheritEntity;
 
-use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\entity_inherit\EntityInherit;
 use Drupal\entity_inherit\Utilities\FriendTrait;
 
@@ -38,7 +38,7 @@ class EntityInheritEntityFactory {
    *   A type, for example "node".
    * @param string $id
    *   An id, for example "1".
-   * @param null|\Drupal\Core\Entity\EntityInterface $entity
+   * @param null|\Drupal\Core\Entity\FieldableEntityInterface $entity
    *   The Drupal entity object, or NULL if we don't have it.
    *
    * @return \Drupal\entity_inherit\EntityInheritEntity\EntityInheritEntitySingleInterface
@@ -51,13 +51,13 @@ class EntityInheritEntityFactory {
   /**
    * Get an entity from an entity.
    *
-   * @param \Drupal\Core\Entity\EntityInterface $entity
+   * @param \Drupal\Core\Entity\FieldableEntityInterface $entity
    *   A Drupal entity.
    *
    * @return \Drupal\entity_inherit\EntityInheritEntity\EntityInheritEntitySingleInterface
    *   An entity.
    */
-  public function fromEntity(EntityInterface $entity) : EntityInheritEntitySingleInterface {
+  public function fromEntity(FieldableEntityInterface $entity) : EntityInheritEntitySingleInterface {
     if ($entity->id()) {
       return $this->fromTypeIdEntity($entity->getEntityTypeId(), $entity->id(), $entity);
     }
@@ -67,13 +67,13 @@ class EntityInheritEntityFactory {
   /**
    * Get an entity from an existing entity.
    *
-   * @param \Drupal\Core\Entity\EntityInterface $entity
+   * @param \Drupal\Core\Entity\FieldableEntityInterface $entity
    *   A Drupal entity.
    *
    * @return \Drupal\entity_inherit\EntityInheritEntity\EntityInheritSingleExistingEntityInterface
    *   An entity.
    */
-  public function fromExistingEntity(EntityInterface $entity) : EntityInheritSingleExistingEntityInterface {
+  public function fromExistingEntity(FieldableEntityInterface $entity) : EntityInheritSingleExistingEntityInterface {
     $candidate = $this->fromEntity($entity);
 
     if (is_a($candidate, EntityInheritSingleExistingEntityInterface::class)) {

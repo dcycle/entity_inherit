@@ -4,6 +4,7 @@ namespace Drupal\entity_inherit\EntityInheritFieldValue;
 
 use Drupal\entity_inherit\EntityInherit;
 use Drupal\entity_inherit\Utilities\FriendTrait;
+use Drupal\entity_inherit\EntityInheritField\EntityInheritFieldId;
 
 /**
  * A factory to build entities. Instantiate through EntityEnherit.
@@ -43,7 +44,7 @@ class EntityInheritFieldValueFactory {
   /**
    * Get a new field value.
    *
-   * @param string $field_name
+   * @param \Drupal\entity_inherit\EntityInheritField\EntityInheritFieldId $field_name
    *   The field name.
    * @param array $value
    *   The new value.
@@ -53,7 +54,7 @@ class EntityInheritFieldValueFactory {
    * @return \Drupal\entity_inherit\EntityInheritFieldValue\EntityInheritFieldValueInterface
    *   A new field value object.
    */
-  public function newFieldValue(string $field_name, array $value, array $previous) : EntityInheritFieldValueInterface {
+  public function newFieldValue(EntityInheritFieldId $field_name, array $value, array $previous) : EntityInheritFieldValueInterface {
     return new EntityInheritFieldValue($this->app, $field_name, $value, $previous);
   }
 

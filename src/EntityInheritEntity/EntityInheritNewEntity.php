@@ -2,8 +2,9 @@
 
 namespace Drupal\entity_inherit\EntityInheritEntity;
 
-use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\entity_inherit\EntityInherit;
+use Drupal\entity_inherit\EntityInheritField\EntityInheritFieldId;
 use Drupal\entity_inherit\EntityInheritFieldValue\EntityInheritSingleFieldValueInterface;
 
 /**
@@ -23,12 +24,12 @@ class EntityInheritNewEntity extends EntityInheritEntity {
   /**
    * Constructor.
    *
-   * @param \Drupal\Core\Entity\EntityInterface $entity
+   * @param \Drupal\Core\Entity\FieldableEntityInterface $entity
    *   A Drupal entity.
    * @param \Drupal\entity_inherit\EntityInherit $app
    *   The global app.
    */
-  public function __construct(EntityInterface $entity, EntityInherit $app) {
+  public function __construct(FieldableEntityInterface $entity, EntityInherit $app) {
     $this->drupalEntity = $entity;
     $this->app = $app;
     parent::__construct($entity->getEntityTypeId(), $entity, $app);
@@ -37,7 +38,7 @@ class EntityInheritNewEntity extends EntityInheritEntity {
   /**
    * {@inheritdoc}
    */
-  public function getDrupalEntity() : EntityInterface {
+  public function getDrupalEntity() {
     return $this->drupalEntity;
   }
 
@@ -62,7 +63,7 @@ class EntityInheritNewEntity extends EntityInheritEntity {
   /**
    * {@inheritdoc}
    */
-  public function originalValue(string $field_name) : array {
+  public function originalValue(EntityInheritFieldId $field_name) : array {
     return [];
   }
 

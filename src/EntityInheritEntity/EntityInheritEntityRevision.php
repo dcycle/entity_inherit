@@ -2,8 +2,9 @@
 
 namespace Drupal\entity_inherit\EntityInheritEntity;
 
-use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\entity_inherit\EntityInherit;
+use Drupal\entity_inherit\EntityInheritField\EntityInheritFieldId;
 use Drupal\entity_inherit\EntityInheritFieldValue\EntityInheritFieldValueCollectionInterface;
 use Drupal\entity_inherit\EntityInheritFieldValue\EntityInheritFieldValue;
 use Drupal\entity_inherit\EntityInheritField\EntityInheritFieldListInterface;
@@ -12,6 +13,8 @@ use Drupal\entity_inherit\EntityInheritField\EntityInheritFieldListInterface;
  * An entity or entity revision.
  */
 abstract class EntityInheritEntityRevision implements EntityInheritEntityRevisionInterface, EntityInheritReadableEntityInterface {
+
+  use StringTranslationTrait;
 
   /**
    * The injected app singleton.
@@ -23,7 +26,7 @@ abstract class EntityInheritEntityRevision implements EntityInheritEntityRevisio
   /**
    * The Drupal entity.
    *
-   * @var \Drupal\Core\Entity\EntityInterface
+   * @var \Drupal\Core\Entity\FieldableEntityInterface
    */
   protected $drupalEntity;
 
@@ -39,7 +42,7 @@ abstract class EntityInheritEntityRevision implements EntityInheritEntityRevisio
    *
    * @param string $type
    *   The Drupal entity type such as "node".
-   * @param null|\Drupal\Core\Entity\EntityInterface $entity
+   * @param null|\Drupal\Core\Entity\FieldableEntityInterface $entity
    *   The Drupal entity object, or NULL if we don't have it.
    * @param \Drupal\entity_inherit\EntityInherit $app
    *   The global app.
@@ -63,10 +66,10 @@ abstract class EntityInheritEntityRevision implements EntityInheritEntityRevisio
   /**
    * Get the Drupal entity.
    *
-   * @return \Drupal\Core\Entity\EntityInterface
+   * @return \Drupal\Core\Entity\FieldableEntityInterface|null
    *   This Drupal entity.
    */
-  abstract public function getDrupalEntity() : EntityInterface;
+  abstract public function getDrupalEntity();
 
   /**
    * {@inheritdoc}
@@ -86,6 +89,34 @@ abstract class EntityInheritEntityRevision implements EntityInheritEntityRevisio
    */
   public function getBundle() : string {
     return $this->getDrupalEntity()->bundle();
+  }
+
+  /**
+   * Retrieve a field object linked to a Drupal entity.
+   *
+   * @param \Drupal\entity_inherit\EntityInheritField\EntityInheritFieldId $field_name
+   *   A field name.
+   *
+   * @return mixed
+   *   A Drupal field object, or NULL.
+   *
+   * @throws \Exception
+   */
+  public function getField(EntityInheritFieldId $field_name) {
+    $return = NULL;
+    try {
+      $field = $this->app->fieldFactory()->fromId($field_name);
+      if ($field->entityType() == $this->type) {
+        if (!$this->getDrupalEntity()->hasField($field->fieldName()->fieldName())) {
+          return NULL;
+        }
+        return $this->getDrupalEntity()->get($field->fieldName()->fieldName($this->getDrupalEntity()));
+      }
+    }
+    catch (\Throwable $t) {
+      $this->app->watchdogAndUserError($t, $this->t('Could not fetch field from entity.'));
+    }
+    return $return;
   }
 
   /**
@@ -111,27 +142,27 @@ abstract class EntityInheritEntityRevision implements EntityInheritEntityRevisio
   /**
    * {@inheritdoc}
    */
-  public function hasField(string $field) : bool {
-    return array_key_exists($field, $this->allFieldNames());
+  public function hasField(EntityInheritFieldId $field) : bool {
+    return array_key_exists($field->uniqueId(), $this->allFieldNames());
   }
 
   /**
    * {@inheritdoc}
    */
-  public function inheritableFields() : array {
+  public function inheritableFields() : EntityInheritFieldListInterface {
     return $this->app->inheritableFields($this->getType(), $this->getBundle());
   }
 
   /**
    * Get the original value of a field.
    *
-   * @param string $field_name
+   * @param \Drupal\entity_inherit\EntityInheritField\EntityInheritFieldId $field_name
    *   A field.
    *
    * @return array
    *   An original value.
    */
-  abstract public function originalValue(string $field_name) : array;
+  abstract public function originalValue(EntityInheritFieldId $field_name) : array;
 
   /**
    * {@inheritdoc}
@@ -140,8 +171,8 @@ abstract class EntityInheritEntityRevision implements EntityInheritEntityRevisio
     $return = $this->app->getEntityFactory()->newCollection();
 
     foreach ($fields->toArray() as $field) {
-      if ($field_value = $this->getDrupalEntity()->{$field->__toString()}) {
-        $drupal_entities = $field_value->referencedEntities();
+      if ($field_object = $this->getField($field->fieldName())) {
+        $drupal_entities = $field_object->referencedEntities();
         foreach ($drupal_entities as $drupal_entity) {
           $return->add(new EntityInheritExistingEntity($drupal_entity->getEntityTypeId(), $drupal_entity->id(), $drupal_entity, $this->app));
         }
@@ -154,8 +185,9 @@ abstract class EntityInheritEntityRevision implements EntityInheritEntityRevisio
   /**
    * {@inheritdoc}
    */
-  public function value(string $field_name) : array {
-    return $this->getDrupalEntity()->{$field_name}->getValue();
+  public function value(EntityInheritFieldId $field_name) : array {
+    $candidate = $this->getField($field_name);
+    return $candidate ? $candidate->getValue() : [];
   }
 
 }

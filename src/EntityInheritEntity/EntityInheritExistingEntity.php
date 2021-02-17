@@ -2,9 +2,10 @@
 
 namespace Drupal\entity_inherit\EntityInheritEntity;
 
-use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\entity_inherit\EntityInherit;
+use Drupal\entity_inherit\EntityInheritField\EntityInheritFieldId;
 use Drupal\entity_inherit\EntityInheritFieldValue\EntityInheritFieldValue;
 use Drupal\entity_inherit\EntityInheritFieldValue\EntityInheritSingleFieldValueInterface;
 use Drupal\entity_inherit\EntityInheritFieldValue\EntityInheritFieldValueCollectionInterface;
@@ -30,7 +31,7 @@ class EntityInheritExistingEntity extends EntityInheritEntity implements EntityI
    *   The Drupal entity type such as "node".
    * @param string $id
    *   The Drupal entity id such as 1.
-   * @param null|\Drupal\Core\Entity\EntityInterface $entity
+   * @param null|\Drupal\Core\Entity\FieldableEntityInterface $entity
    *   The Drupal entity object, or NULL if we don't have it.
    * @param \Drupal\entity_inherit\EntityInherit $app
    *   The global app.
@@ -67,8 +68,8 @@ class EntityInheritExistingEntity extends EntityInheritEntity implements EntityI
     $return = $factory->newCollection();
     $original = $this->original();
 
-    foreach (array_keys($this->inheritableFields()) as $field_name) {
-      $return->add($factory->newFieldValue($field_name, $this->value($field_name), $original->value($field_name)));
+    foreach ($this->inheritableFields()->toFieldIdsArray() as $field_id) {
+      $return->add($factory->newFieldValue($field_id, $this->value($field_id), $original->value($field_id)));
     }
 
     return $return;
@@ -77,9 +78,13 @@ class EntityInheritExistingEntity extends EntityInheritEntity implements EntityI
   /**
    * {@inheritdoc}
    */
-  public function getDrupalEntity() : EntityInterface {
+  public function getDrupalEntity() {
     if ($this->drupalEntity === NULL) {
-      $this->drupalEntity = $this->app->getEntityTypeManager()->getStorage($this->type)->load($this->id);
+      $candidate = $this->app->getEntityTypeManager()->getStorage($this->type)->load($this->id);
+
+      if ($candidate && is_a($candidate, FieldableEntityInterface::class)) {
+        $this->drupalEntity = $candidate;
+      }
     }
     if ($this->drupalEntity === NULL) {
       throw new \Exception('Cannot create entity of type ' . $this->type . ' with id ' . $this->id);
@@ -125,7 +130,7 @@ class EntityInheritExistingEntity extends EntityInheritEntity implements EntityI
   /**
    * {@inheritdoc}
    */
-  public function originalValue(string $field_name) : array {
+  public function originalValue(EntityInheritFieldId $field_name) : array {
     return $this->original()->value($field_name);
   }
 
@@ -145,7 +150,7 @@ class EntityInheritExistingEntity extends EntityInheritEntity implements EntityI
 
     foreach ($parent['original'] as $field => $original_value) {
       if (array_key_exists($field, $parent['changed']) && $parent['changed'][$field] != $parent['original'][$field]) {
-        $fieldvalue = new EntityInheritFieldValue($this->app, $field, $parent['changed'][$field], $parent['original'][$field]);
+        $fieldvalue = new EntityInheritFieldValue($this->app, new EntityInheritFieldId(explode('.', $field)[0], explode('.', $field)[1]), $parent['changed'][$field], $parent['original'][$field]);
         $this->updateField($fieldvalue);
       }
     }

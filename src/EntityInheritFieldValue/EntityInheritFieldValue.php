@@ -3,6 +3,7 @@
 namespace Drupal\entity_inherit\EntityInheritFieldValue;
 
 use Drupal\entity_inherit\EntityInherit;
+use Drupal\entity_inherit\EntityInheritField\EntityInheritFieldId;
 
 /**
  * A field value and its previous value.
@@ -19,7 +20,7 @@ class EntityInheritFieldValue implements EntityInheritFieldValueInterface, Entit
   /**
    * The field name.
    *
-   * @var string
+   * @var \Drupal\entity_inherit\EntityInheritField\EntityInheritFieldId
    */
   protected $fieldName;
 
@@ -42,14 +43,14 @@ class EntityInheritFieldValue implements EntityInheritFieldValueInterface, Entit
    *
    * @param \Drupal\entity_inherit\EntityInherit $app
    *   The app singleton.
-   * @param string $field_name
+   * @param \Drupal\entity_inherit\EntityInheritField\EntityInheritFieldId $field_name
    *   The field name.
    * @param array $value
    *   The new value.
    * @param array $previous
    *   The original value.
    */
-  public function __construct(EntityInherit $app, string $field_name, array $value, array $previous) {
+  public function __construct(EntityInherit $app, EntityInheritFieldId $field_name, array $value, array $previous) {
     $this->app = $app;
     $this->fieldName = $field_name;
     $this->value = $value;
@@ -80,7 +81,7 @@ class EntityInheritFieldValue implements EntityInheritFieldValueInterface, Entit
   /**
    * {@inheritdoc}
    */
-  public function fieldName() : string {
+  public function fieldName() : EntityInheritFieldId {
     return $this->fieldName;
   }
 
@@ -89,7 +90,7 @@ class EntityInheritFieldValue implements EntityInheritFieldValueInterface, Entit
    */
   public function toArray() : array {
     return [
-      $this->fieldName() => $this,
+      $this->fieldName()->uniqueId() => $this,
     ];
   }
 

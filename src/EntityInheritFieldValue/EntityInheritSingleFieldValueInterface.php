@@ -2,6 +2,8 @@
 
 namespace Drupal\entity_inherit\EntityInheritFieldValue;
 
+use Drupal\entity_inherit\EntityInheritField\EntityInheritFieldId;
+
 /**
  * A single field value and its previous value.
  */
@@ -18,10 +20,10 @@ interface EntityInheritSingleFieldValueInterface {
   /**
    * Get the field name.
    *
-   * @return string
-   *   The field name.
+   * @return \Drupal\entity_inherit\EntityInheritField\EntityInheritFieldId
+   *   The field id.
    */
-  public function fieldName() : string;
+  public function fieldName() : EntityInheritFieldId;
 
   /**
    * The new value.

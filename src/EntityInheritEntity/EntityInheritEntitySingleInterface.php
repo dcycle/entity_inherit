@@ -2,6 +2,8 @@
 
 namespace Drupal\entity_inherit\EntityInheritEntity;
 
+use Drupal\entity_inherit\EntityInheritField\EntityInheritFieldId;
+
 /**
  * An single entity.
  */
@@ -18,13 +20,13 @@ interface EntityInheritEntitySingleInterface extends EntityInheritUpdatableEntit
   /**
    * Check if we have a field.
    *
-   * @param string $field
+   * @param \Drupal\entity_inherit\EntityInheritField\EntityInheritFieldId $field
    *   A field name.
    *
    * @return bool
    *   TRUE if we have new parents.
    */
-  public function hasField(string $field) : bool;
+  public function hasField(EntityInheritFieldId $field) : bool;
 
   /**
    * Check if we have new parents.

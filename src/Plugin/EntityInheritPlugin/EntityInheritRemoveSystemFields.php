@@ -22,9 +22,9 @@ class EntityInheritRemoveSystemFields extends EntityInheritPluginBase {
   public function filterFields(array &$field_names, array $original, string $category, EntityInherit $app) {
     $new_list = [];
 
-    foreach ($field_names as $field_name => $field) {
-      if (strpos($field_name, 'field_') === 0 || $field_name == 'body') {
-        $new_list[$field_name] = $field;
+    foreach ($field_names as $field_name => $field_value) {
+      if (preg_match('/^[^\.]*\.field_[a-z0-9_]*$/', $field_name) || $field_name == 'node.body') {
+        $new_list[$field_name] = $field_value;
       }
     }
 

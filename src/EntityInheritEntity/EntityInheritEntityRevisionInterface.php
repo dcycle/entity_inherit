@@ -3,6 +3,7 @@
 namespace Drupal\entity_inherit\EntityInheritEntity;
 
 use Drupal\entity_inherit\EntityInheritField\EntityInheritFieldListInterface;
+use Drupal\entity_inherit\EntityInheritField\EntityInheritFieldId;
 
 /**
  * An entity or entity revision interface.
@@ -20,13 +21,16 @@ interface EntityInheritEntityRevisionInterface {
   /**
    * Get all our fields which are candidates to be inherited.
    *
-   * @return array
-   *   Array of fields.
+   * @return \Drupal\entity_inherit\EntityInheritField\EntityInheritFieldListInterface
+   *   All inheritable fields for a type and bundle.
    */
-  public function inheritableFields() : array;
+  public function inheritableFields() : EntityInheritFieldListInterface;
 
   /**
    * Get a field value as an array.
+   *
+   * @param \Drupal\entity_inherit\EntityInheritField\EntityInheritFieldId $field_name
+   *   A field name.
    *
    * @return array
    *   The field value, such as:
@@ -43,7 +47,7 @@ interface EntityInheritEntityRevisionInterface {
    *     ],
    *   ].
    */
-  public function value(string $field_name) : array;
+  public function value(EntityInheritFieldId $field_name) : array;
 
   /**
    * Get referenced entities.

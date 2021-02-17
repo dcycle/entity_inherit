@@ -42,7 +42,7 @@ class EntityInheritAdminForm extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $fields = $this->app->getParentEntityFields();
+    $fields = $this->app->configGetFields();
 
     // ::buildForm() can be called twice. Only display feedback when the form
     // is being built to be displayed, not during validation or submission.
@@ -53,8 +53,8 @@ class EntityInheritAdminForm extends FormBase {
     $form['fields'] = [
       '#type' => 'textarea',
       '#title' => $this->t('Parent entity fields'),
-      '#description' => $this->t('Entities (children) which reference other entities (parents) via these fields will inherit parents\' field values. To set these programmatically, you can use <code>entity_inherit()->setParentEntityFields(["field_example_one", "field_example_two"])</code>.'),
-      '#default_value' => $fields->toTextArea(),
+      '#description' => $this->t("Entities (children) which reference other entities (parents) via these fields will inherit parents' field values. Be sure to prefix the field names with the entity type ('node.', for example). To set these programmatically, you can use <code>entity_inherit()->setParentEntityFields(['node.field_example_one', 'node.field_example_two'])</code>."),
+      '#default_value' => implode(PHP_EOL, $fields),
     ];
 
     $form['actions']['submit'] = [
