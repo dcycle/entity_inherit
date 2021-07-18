@@ -47,12 +47,12 @@ class EntityInheritQueue implements \Countable {
    *   Items to add to the queue, for example ['node:1', 'node:2'].
    * @param array $original_fields
    *   Original field values of the parent field(s), for example:
-   *   ['field_x' => [['value' => 'hello']]]. node:1 and node:2 will have each
-   *   field value changed to the values in $changed_fields if their original
-   *   field values are these.
+   *   ['node.field_x' => [['value' => 'hello']]]. node:1 and node:2 will have
+   *   each field value changed to the values in $changed_fields if their
+   *   original field values are these.
    * @param array $changed_fields
    *   New field values of the parent field(s), for example:
-   *   ['field_x' => [['value' => 'hi']]]. node:1 and node:2 will have each
+   *   ['node.field_x' => [['value' => 'hi']]]. node:1 and node:2 will have each
    *   field value changed to these values if their original field values are
    *   the ones in $original_fields.
    */
@@ -165,7 +165,50 @@ class EntityInheritQueue implements \Countable {
    * Process an item as represented by an array.
    *
    * @param array $item
-   *   An item represented by a queue array.
+   *   An item represented by a queue array. The format for this needs to
+   *   look like:
+   *      (
+   *          [id] => node:22
+   *          [original] => Array
+   *              (
+   *                  [node.body] => Array
+   *                      (
+   *                          [0] => Array
+   *                              (
+   *                                  [value] => Changed in parent, should
+   *                                             propagate to child.
+   *                                  [summary] =>
+   *                                  [format] => full_html
+   *                              )
+   *
+   *                      )
+   *
+   *                  [node.field_parents] => Array
+   *                      (
+   *                      )
+   *
+   *              )
+   *
+   *          [changed] => Array
+   *              (
+   *                  [node.body] => Array
+   *                      (
+   *                          [0] => Array
+   *                              (
+   *                                  [format] => full_html
+   *                                  [summary] =>
+   *                                  [value] => Whats up?
+   *                              )
+   *
+   *                      )
+   *
+   *                  [node.field_parents] => Array
+   *                      (
+   *                      )
+   *
+   *              )
+   *
+   *      ).
    */
   public function processSingle(array $item) {
     try {
