@@ -21,7 +21,8 @@ interface EntityInheritSingleExistingEntityInterface extends EntityInheritExisti
    *                      (
    *                          [0] => Array
    *                              (
-   *                                  [value] => Changed in parent, should propagate to child.
+   *                                  [value] => Changed in parent,
+   *                                             should propagate to child.
    *                                  [summary] =>
    *                                  [format] => full_html
    *                              )
