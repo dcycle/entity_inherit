@@ -21,7 +21,7 @@ trait FriendTrait {
   protected function friendAccess(array $friends) {
     $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 3);
     $class = isset($trace[2]['class']) ? $trace[2]['class'] : 'not a class';
-    if (!(isset($class) && in_array($class, $friends))) {
+    if (!in_array($class, $friends)) {
       throw new \Exception('Only the following classes, not ' . $class . ', have access to this function.');
     }
   }
