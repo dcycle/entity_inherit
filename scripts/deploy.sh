@@ -17,13 +17,13 @@ echo '-----'
 echo 'About to start persistent (-d) containers based on the images defined'
 echo 'in ./Dockerfile-* files. We are also telling docker-compose to'
 echo 'rebuild the images if they are out of date.'
-if [ "$1" == 8 ]; then
-  DRUPALVERSION=8
-else
+if [ -z "$1" ]; then
   DRUPALVERSION=9
+else
+  DRUPALVERSION="$1"
 fi
 
-docker-compose -f docker-compose.base.yml -f docker-compose.drupal"$DRUPALVERSION".yml up -d --build
+docker-compose -f docker-compose.base.yml -f "docker-compose.drupal$DRUPALVERSION.yml" up -d --build
 
 echo ''
 echo '-----'
