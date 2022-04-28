@@ -14,4 +14,4 @@ docker run -e DRUPALUSER=admin -e DRUPALPASS="$PASS" --rm -v "$(pwd)"/tests/brow
   --network entity_inherit_default \
   -v "$(pwd)"/do-not-commit/screenshots:/artifacts/screenshots \
   -v "$(pwd)"/do-not-commit/dom-captures:/artifacts/dom-captures \
-  dcycle/browsertesting:3
+  dcycle/browsertesting:4
