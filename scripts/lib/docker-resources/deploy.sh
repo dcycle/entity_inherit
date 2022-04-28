@@ -21,7 +21,7 @@ do
   fi
 done
 
-drush si -y --db-url "mysqli://root:drupal@mysql/drupal" standard
+drush si -y --db-url "mysql://root:drupal@mysql/drupal" standard
 cat /var/www/html/modules/custom/entity_inherit/scripts/lib/docker-resources/dev-settings.txt >> /var/www/html/sites/default/settings.php
 
 drush en -y \
