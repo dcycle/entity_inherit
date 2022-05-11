@@ -596,7 +596,6 @@ class EntityInherit {
   protected function uuid() {
     // @codingStandardsIgnoreStart
     // Feels like overkill to inject the uuid service.
-    // @phpstan-ignore-next-line
     return \Drupal::service('uuid')->generate();
     // @codingStandardsIgnoreEnd
   }

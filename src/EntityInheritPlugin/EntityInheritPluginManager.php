@@ -12,7 +12,6 @@ use Drupal\entity_inherit\Annotation\EntityInheritPluginAnnotation;
  */
 // See https://github.com/mglaman/phpstan-drupal/issues/113
 // @codingStandardsIgnoreStart
-// @phpstan-ignore-next-line
 class EntityInheritPluginManager extends DefaultPluginManager {
 // @codingStandardsIgnoreEnd
 
