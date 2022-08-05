@@ -34,7 +34,7 @@ it('It should be possible to view the admin page', async function() {
     await page.type('[name=name]', process.env.DRUPALUSER)
     await page.type('[name=pass]', process.env.DRUPALPASS)
     await page.keyboard.press('Enter');
-    await page.waitForSelector('nav.tabs')
+    await page.waitForSelector('nav.tabs-wrapper')
 
     await screenshot(page, 'user', await page.content());
 

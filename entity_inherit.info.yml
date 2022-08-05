@@ -5,6 +5,6 @@ description: >-
   Allow entities to inherit certain fields from other entities. Fields' values
   are updated every time an entity is saved.
 core_version_requirement: ^9
-php: '7.x'
+php: '8.x'
 dependencies:
   - drupal:entity_reference

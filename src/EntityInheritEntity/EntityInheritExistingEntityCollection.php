@@ -45,7 +45,7 @@ class EntityInheritExistingEntityCollection implements EntityInheritUpdatableEnt
   /**
    * {@inheritdoc}
    */
-  public function count() {
+  public function count() : int {
     return count($this->entities);
   }
 

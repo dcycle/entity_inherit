@@ -215,7 +215,7 @@ class EntityInheritQueue implements \Countable {
       $this->app->getEntityFactory()->fromQueueableItem($item)->process($item);
     }
     catch (\Throwable $t) {
-      $this->app->watchdogAndUserError($t, $this->t('Entity Inherit could not process the item @i.', ['@i' => isset($item['id']) ? $item['id'] : $this->t('[id not available]')]));
+      $this->app->watchdogAndUserError($t, $this->t('Entity Inherit could not process the item @i.', ['@i' => $item['id'] ?? $this->t('[id not available]')]));
     }
   }
 
