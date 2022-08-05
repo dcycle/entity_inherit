@@ -7,7 +7,7 @@ services:
   drupal:
     build:
       context: .
-      dockerfile: Dockerfile-drupal-dev
+      dockerfile: Dockerfile-drupal9
     volumes:
       - ".:/var/www/html/modules/custom/entity_inherit"
     ports:
