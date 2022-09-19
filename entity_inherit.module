@@ -14,9 +14,13 @@ use Drupal\entity_inherit\EntityInherit;
  * @return \Drupal\entity_inherit\EntityInherit
  *   The EntityInherit service.
  */
+// @codingStandardsIgnoreStart
+// PHP Lint wants this to be prefixed with the module name, but it _is_
+// the same as the module name, so I consider this ok.
 function entity_inherit() : EntityInherit {
   return \Drupal::service('entity_inherit');
 }
+// @codingStandardsIgnoreEnd
 
 /**
  * Implements hook_entity_presave().

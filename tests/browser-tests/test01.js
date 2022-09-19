@@ -29,17 +29,17 @@ it('It should be possible to view the admin page', async function() {
     console.log('set viewport')
     await page.setViewport({ width: 1280, height: 800 })
     console.log('go to the login page')
-    await page.goto('http://drupal/user')
+    await page.goto('http://webserver/user')
     console.log('enter credentials')
     await page.type('[name=name]', process.env.DRUPALUSER)
     await page.type('[name=pass]', process.env.DRUPALPASS)
     await page.keyboard.press('Enter');
-    await page.waitForSelector('nav.tabs-wrapper')
+    await page.waitForSelector('#main-content')
 
     await screenshot(page, 'user', await page.content());
 
     console.log('go to /admin/config/entity_inherit')
-    await page.goto('http://drupal/admin/config/entity_inherit')
+    await page.goto('http://webserver/admin/config/entity_inherit')
 
     await page.waitForSelector('#edit-submit')
     await screenshot(page, 'admin-config-page', await page.content());
