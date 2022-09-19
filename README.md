@@ -1,4 +1,4 @@
-[![CircleCI](https://circleci.com/gh/dcycle/entity_inherit.svg?style=svg)](https://circleci.com/gh/dcycle/entity_inherit)
+[![CircleCI](https://circleci.com/gh/dcycle/entity_inherit/tree/4.x.svg?style=svg)](https://circleci.com/gh/dcycle/entity_inherit/tree/4.x)
 
 Entity Inherit
 =====
