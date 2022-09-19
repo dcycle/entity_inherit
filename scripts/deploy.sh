@@ -4,6 +4,11 @@
 #
 set -e
 
+if [ "$1" != "9" ] && [ "$1" != "10" ]; then
+  >&2 echo "Please specify 9 or 10"
+  exit 1;
+fi
+
 echo ''
 echo '-----'
 echo 'About to create the entity_inherit_default network if it does not exist,'
@@ -17,13 +22,7 @@ echo '-----'
 echo 'About to start persistent (-d) containers based on the images defined'
 echo 'in ./Dockerfile-* files. We are also telling docker-compose to'
 echo 'rebuild the images if they are out of date.'
-if [ -z "$1" ]; then
-  DRUPALVERSION=9
-else
-  DRUPALVERSION="$1"
-fi
-
-docker-compose -f docker-compose.base.yml -f "docker-compose.drupal$DRUPALVERSION.yml" up -d --build
+docker-compose -f docker-compose.yml -f "docker-compose.$1.yml" up -d --build
 
 echo ''
 echo '-----'

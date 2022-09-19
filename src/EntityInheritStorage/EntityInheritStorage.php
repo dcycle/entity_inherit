@@ -71,6 +71,7 @@ class EntityInheritStorage implements EntityInheritStorageInterface {
         ->getStorage($source_type)
         ->getQuery();
       $query->condition($source_field_name . '.target_id', $target_id);
+      $query->accessCheck(FALSE);
       return $this->app
         ->getEntityTypeManager()
         ->getStorage($target_type)
