@@ -7,7 +7,7 @@ use Drupal\Core\Entity\EntityFieldManager;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Entity\EntityTypeManager;
-use Drupal\Core\Logger\LoggerChannelFactory;
+use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Logger\RfcLogLevel;
 use Drupal\Core\Messenger\Messenger;
 use Drupal\Core\State\State;
@@ -80,7 +80,7 @@ class EntityInherit {
   /**
    * The injected logger.
    *
-   * @var \Drupal\Core\Logger\LoggerChannelFactory
+   * @var \Drupal\Core\Logger\LoggerChannelFactoryInterface
    */
   protected $loggerFactory;
 
@@ -99,10 +99,10 @@ class EntityInherit {
    *   The injected entity field manager.
    * @param \Drupal\Core\State\State $state
    *   The state service.
-   * @param \Drupal\Core\Logger\LoggerChannelFactory $loggerFactory
+   * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $loggerFactory
    *   The logger service.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, EntityInheritPluginManager $plugin_manager, EntityTypeManager $entity_type_manager, Messenger $messenger, EntityFieldManager $entity_field_manager, State $state, LoggerChannelFactory $loggerFactory) {
+  public function __construct(ConfigFactoryInterface $config_factory, EntityInheritPluginManager $plugin_manager, EntityTypeManager $entity_type_manager, Messenger $messenger, EntityFieldManager $entity_field_manager, State $state, LoggerChannelFactoryInterface $loggerFactory) {
     $this->configFactory = $config_factory;
     $this->pluginManager = $plugin_manager;
     $this->entityTypeManager = $entity_type_manager;
