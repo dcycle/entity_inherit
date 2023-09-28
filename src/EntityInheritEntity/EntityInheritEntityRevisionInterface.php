@@ -2,8 +2,8 @@
 
 namespace Drupal\entity_inherit\EntityInheritEntity;
 
-use Drupal\entity_inherit\EntityInheritField\EntityInheritFieldListInterface;
 use Drupal\entity_inherit\EntityInheritField\EntityInheritFieldId;
+use Drupal\entity_inherit\EntityInheritField\EntityInheritFieldListInterface;
 
 /**
  * An entity or entity revision interface.

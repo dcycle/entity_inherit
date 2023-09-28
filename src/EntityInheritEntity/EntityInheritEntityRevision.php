@@ -5,9 +5,9 @@ namespace Drupal\entity_inherit\EntityInheritEntity;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\entity_inherit\EntityInherit;
 use Drupal\entity_inherit\EntityInheritField\EntityInheritFieldId;
-use Drupal\entity_inherit\EntityInheritFieldValue\EntityInheritFieldValueCollectionInterface;
-use Drupal\entity_inherit\EntityInheritFieldValue\EntityInheritFieldValue;
 use Drupal\entity_inherit\EntityInheritField\EntityInheritFieldListInterface;
+use Drupal\entity_inherit\EntityInheritFieldValue\EntityInheritFieldValue;
+use Drupal\entity_inherit\EntityInheritFieldValue\EntityInheritFieldValueCollectionInterface;
 
 /**
  * An entity or entity revision.

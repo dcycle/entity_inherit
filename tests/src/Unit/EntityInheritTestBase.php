@@ -2,10 +2,10 @@
 
 namespace Drupal\Tests\entity_inherit\Unit;
 
-use PHPUnit\Framework\TestCase;
 use Drupal\entity_inherit\EntityInherit;
 use Drupal\entity_inherit\EntityInheritEvent\EntityInheritEventBase;
 use Drupal\entity_inherit\EntityInheritEvent\EntityInheritEventInterface;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Base class for testing.
