@@ -3,8 +3,8 @@
 namespace Drupal\entity_inherit\EntityInheritFieldValue;
 
 use Drupal\entity_inherit\EntityInherit;
-use Drupal\entity_inherit\Utilities\FriendTrait;
 use Drupal\entity_inherit\EntityInheritField\EntityInheritFieldId;
+use Drupal\entity_inherit\Utilities\FriendTrait;
 
 /**
  * A factory to build entities. Instantiate through EntityEnherit.

@@ -2,10 +2,10 @@
 
 namespace Drupal\entity_inherit\EntityInheritDev;
 
-use Drupal\node\Entity\Node;
 use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\entity_inherit\EntityInherit;
 use Drupal\entity_inherit\Utilities\FriendTrait;
+use Drupal\node\Entity\Node;
 
 /**
  * Development tools.
