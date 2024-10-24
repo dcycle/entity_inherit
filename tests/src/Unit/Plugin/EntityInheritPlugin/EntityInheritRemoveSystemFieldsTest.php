@@ -2,8 +2,8 @@
 
 namespace Drupal\Tests\entity_inherit\Unit\Plugin\EntityInheritPlugin;
 
-use Drupal\entity_inherit\Plugin\EntityInheritPlugin\EntityInheritRemoveSystemFields;
 use Drupal\Tests\entity_inherit\Unit\EntityInheritTestBase;
+use Drupal\entity_inherit\Plugin\EntityInheritPlugin\EntityInheritRemoveSystemFields;
 
 /**
  * Test EntityInheritRemoveSystemFields.

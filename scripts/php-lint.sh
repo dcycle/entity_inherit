@@ -4,8 +4,10 @@
 #
 set -e
 
-echo '=> Linting PHP code.'
+echo 'Linting PHP files'
 echo 'If you are getting a false negative, use:'
+echo 'Linting PHP files with https://github.com/dcycle/docker-php-lint'
+echo 'If you are getting a false positive, use:'
 echo ''
 echo '// @codingStandardsIgnoreStart'
 echo '...'
